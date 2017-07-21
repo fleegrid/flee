@@ -8,16 +8,23 @@
 #ifndef _FLEE_COMMON_H_
 #define _FLEE_COMMON_H_
 
-#ifdef __cplusplus
-#define __BEGIN_STDC extern "C" {
+#include <inttypes.h>
+
+#include <flee/error.h>
+
+#if defined(__APPLE__) && defined(__MACH__)
+/* Darwin system, including macOS, iOS */
+#define _FL_DARWIN
+#elif defined(__linux__)
+/* Linux system */
+#define _FL_LINUX
 #else
-#define __BEGIN_STDC
+#error "platform not supported"
 #endif
 
-#ifdef __cplusplus
-#define __END_STDC }
-#else
-#define __END_STDC
-#endif
+/**
+ * fl_ip is a 32-bit IPv4 address
+ */
+typedef uint8_t fl_ip[4];
 
 #endif /* _FLEE_COMMON_H_ */

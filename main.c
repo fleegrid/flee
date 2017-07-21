@@ -9,6 +9,8 @@
 #include <stdio.h>
 
 int main(int argc, char **argv) {
-  printf("hello %s\n", tun());
+  fl_tun tun = fl_tun_empty;
+  fl_tun_init(&tun);
+  printf("hello %s(%d)\n", tun.name, tun.fd);
   return 0;
 }

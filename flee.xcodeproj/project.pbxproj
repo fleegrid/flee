@@ -30,6 +30,7 @@
 		9461A1431F22113300FB6A7F /* tun.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tun.h; sourceTree = "<group>"; };
 		9461A1441F22113300FB6A7F /* flee.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = flee.h; sourceTree = "<group>"; };
 		9461A1451F22113300FB6A7F /* tun.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tun.c; sourceTree = "<group>"; };
+		9461A1481F221DC900FB6A7F /* error.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = error.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,6 +76,7 @@
 			children = (
 				9461A1421F22113300FB6A7F /* common.h */,
 				9461A1431F22113300FB6A7F /* tun.h */,
+				9461A1481F221DC900FB6A7F /* error.h */,
 			);
 			path = flee;
 			sourceTree = "<group>";

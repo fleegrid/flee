@@ -10,10 +10,36 @@
 
 #include <flee/common.h>
 
-__BEGIN_STDC
+#include <net/if.h>
+#include <sys/socket.h>
 
-char *tun();
+typedef struct {
+  // local ip
+  fl_ip ip;
+  // point to point destination ip
+  fl_ip dst_ip;
+  // netmask
+  fl_ip netmask;
+  // mtu
+  int mtu;
+  // name of device
+  char name[IF_NAMESIZE];
+  // underlaying file descriptor
+  int fd;
+} fl_tun;
 
-__END_STDC
+#define fl_tun_empty                                                           \
+  (fl_tun) { .fd = -1 }
+
+/**
+ * initialize a fl_tun structure, setup IP and dstIP, returns name and fd
+ * correctly
+ */
+fl_err fl_tun_init(fl_tun *tun);
+
+/**
+ * close the underlaying fd
+ */
+fl_err fl_tun_deinit(fl_tun *tun);
 
 #endif /* _FLEE_TUN_H_ */
