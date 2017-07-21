@@ -7,12 +7,12 @@ SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Wpedantic")
 SET(CMAKE_DEBUG_POSTFIX _debug)
 
 SET(FLEE_LIB_SRCS
-  tun.c
-  util.c
+  src/tun.c
+  src/util.c
   )
 
 SET(FLEE_CLI_SRCS
-  main.c
+  src/main.c
   )
 
 # libflee
