@@ -21,4 +21,9 @@ typedef uint8_t fl_ip[4];
  */
 fl_err fl_ip_set(fl_ip ip, char *s);
 
+/*
+ * convert IP to unsigned int 32
+ */
+uint32_t fl_ip_to_u(fl_ip ip);
+
 #endif /* _FLEE_UTIL_H_ */

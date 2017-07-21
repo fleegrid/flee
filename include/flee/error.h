@@ -10,9 +10,14 @@
 
 typedef int fl_err;
 
-#define err_ok 0         // no error
-#define err_syscall 1    // syscall err, check errno for details
-#define err_ip_invalid 2 // ip is invalid
+// no error
+#define err_ok 0
+// syscall err, check errno for details
+#define err_syscall 1
+// required function is not implemented in current platform
+#define err_platform 2
+// ip is invalid
+#define err_ip_invalid 3
 
 // if ERR is not err_ok, goto LABEL
 #define require_ok(ERR, LABEL)                                                 \
@@ -20,17 +25,15 @@ typedef int fl_err;
     goto LABEL;                                                                \
   }
 
-// if COND not satisfied, then ACT and goto LABEL
+// if COND is not satisfied, then ACT and goto LABEL
 #define require(COND, ACT, LABEL)                                              \
   if (!(COND)) {                                                               \
     ACT;                                                                       \
     goto LABEL;                                                                \
   }
 
-// if E less than 0, assign ERR to CODE
-#define check_syscall(E, ERR)                                                  \
-  if (E < 0) {                                                                 \
-    ERR = err_syscall;                                                         \
-  }
+// if RET is < 0, then assign ERR to err_syscall and goto LABEL
+#define require_syscall(RET, ERR, LABEL)                                       \
+  require(RET >= 0, ERR = err_syscall, LABEL)
 
 #endif /* _FLEE_ERROR_H_ */
