@@ -9,6 +9,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include <sys/ioctl.h>
 #include <sys/socket.h>
@@ -60,5 +61,13 @@ exit:
 
 fl_err fl_tun_deinit(fl_tun *tun) {
   fl_err err = err_ok;
+  int ret;
+  if (tun->fd > 0) {
+    ret = close(tun->fd);
+    tun->fd = -1;
+    check_syscall(ret, err);
+    require_ok(err, exit);
+  }
+exit:
   return err;
 }
