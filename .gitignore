@@ -63,13 +63,13 @@ compile_commands.json
 CTestTestfile.cmake
 
 # Build
-/build
+build/
+
 # Xcode
 #
 # gitignore contributors: remember to update Global/Xcode.gitignore, Objective-C.gitignore & Swift.gitignore
 
 ## Build generated
-build/
 DerivedData/
 
 ## Various settings
