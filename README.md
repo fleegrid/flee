@@ -4,6 +4,10 @@
 
 FleeGrid C implementation
 
+## Dependencies
+
+* `libsodium`
+
 ## Security
 
 All commits and emails should be signed with GPG key [0xE160DAF25E30EB52](https://pgp.key-server.io/0xE160DAF25E30EB52)
