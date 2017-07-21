@@ -10,12 +10,20 @@
 
 typedef int fl_err;
 
-#define err_ok 0      // no error
-#define err_syscall 1 // syscall err, check errno for details
+#define err_ok 0         // no error
+#define err_syscall 1    // syscall err, check errno for details
+#define err_ip_invalid 2 // ip is invalid
 
 // if ERR is not err_ok, goto LABEL
 #define require_ok(ERR, LABEL)                                                 \
   if (ERR != err_ok) {                                                         \
+    goto LABEL;                                                                \
+  }
+
+// if COND not satisfied, then ACT and goto LABEL
+#define require(COND, ACT, LABEL)                                              \
+  if (!(COND)) {                                                               \
+    ACT;                                                                       \
     goto LABEL;                                                                \
   }
 

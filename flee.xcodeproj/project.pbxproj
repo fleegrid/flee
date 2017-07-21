@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		9461A1461F22113300FB6A7F /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 9461A13F1F22113300FB6A7F /* main.c */; };
 		9461A1471F22113300FB6A7F /* tun.c in Sources */ = {isa = PBXBuildFile; fileRef = 9461A1451F22113300FB6A7F /* tun.c */; };
+		9461A14B1F222E2E00FB6A7F /* util.c in Sources */ = {isa = PBXBuildFile; fileRef = 9461A14A1F222E2E00FB6A7F /* util.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -31,6 +32,8 @@
 		9461A1441F22113300FB6A7F /* flee.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = flee.h; sourceTree = "<group>"; };
 		9461A1451F22113300FB6A7F /* tun.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tun.c; sourceTree = "<group>"; };
 		9461A1481F221DC900FB6A7F /* error.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = error.h; sourceTree = "<group>"; };
+		9461A1491F222D2D00FB6A7F /* util.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = util.h; sourceTree = "<group>"; };
+		9461A14A1F222E2E00FB6A7F /* util.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = util.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -50,6 +53,7 @@
 				9461A1401F22113300FB6A7F /* include */,
 				9461A13F1F22113300FB6A7F /* main.c */,
 				9461A1451F22113300FB6A7F /* tun.c */,
+				9461A14A1F222E2E00FB6A7F /* util.c */,
 				9461A1361F2210CF00FB6A7F /* Products */,
 			);
 			sourceTree = "<group>";
@@ -77,6 +81,7 @@
 				9461A1421F22113300FB6A7F /* common.h */,
 				9461A1431F22113300FB6A7F /* tun.h */,
 				9461A1481F221DC900FB6A7F /* error.h */,
+				9461A1491F222D2D00FB6A7F /* util.h */,
 			);
 			path = flee;
 			sourceTree = "<group>";
@@ -140,6 +145,7 @@
 			files = (
 				9461A1461F22113300FB6A7F /* main.c in Sources */,
 				9461A1471F22113300FB6A7F /* tun.c in Sources */,
+				9461A14B1F222E2E00FB6A7F /* util.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

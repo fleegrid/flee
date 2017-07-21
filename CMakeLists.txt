@@ -8,6 +8,7 @@ SET(CMAKE_DEBUG_POSTFIX _debug)
 
 SET(FLEE_LIB_SRCS
   tun.c
+  util.c
   )
 
 SET(FLEE_CLI_SRCS

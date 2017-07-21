@@ -8,10 +8,16 @@
 #ifndef _FLEE_COMMON_H_
 #define _FLEE_COMMON_H_
 
-#include <inttypes.h>
-
 #include <flee/error.h>
 
+/**
+ * unused parameter
+ */
+#define _unused __attribute__((unused))
+
+/**
+ * platform determination
+ */
 #if defined(__APPLE__) && defined(__MACH__)
 /* Darwin system, including macOS, iOS */
 #define _FL_DARWIN
@@ -22,9 +28,6 @@
 #error "platform not supported"
 #endif
 
-/**
- * fl_ip is a 32-bit IPv4 address
- */
-typedef uint8_t fl_ip[4];
+#include <flee/util.h>
 
 #endif /* _FLEE_COMMON_H_ */
