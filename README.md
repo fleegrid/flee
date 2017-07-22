@@ -22,6 +22,8 @@ You MUST encrypt your email with the GPG key mentioned above and also provide yo
 
 * A project that must not be named
 
+* `BLAKE2`, [https://blake2.net](https://blake2.net)
+
 ## License
 
 MIT License, see `LICENSE` file.

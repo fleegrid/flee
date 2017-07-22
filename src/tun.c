@@ -5,7 +5,8 @@
 //  Created by Unit.2B on 2017/7/21.
 //
 
-#include <flee.h>
+#define __FL_LIB_SOURCE__
+#include <flee/tun.h>
 
 #include <stdio.h>
 #include <stdlib.h>

@@ -11,9 +11,11 @@
 #include <flee/common.h>
 
 #include <net/if.h>
-#include <sys/socket.h>
 
 typedef struct {
+  /*
+   * input
+   */
   // local ip
   fl_ip ip;
   // point to point destination ip
@@ -22,6 +24,9 @@ typedef struct {
   fl_ip netmask;
   // mtu
   int mtu;
+  /*
+   * output
+   */
   // name of device
   char name[IF_NAMESIZE];
   // underlaying file descriptor

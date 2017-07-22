@@ -1,7 +1,10 @@
 PROJECT(flee)
 CMAKE_MINIMUM_REQUIRED(VERSION 3.2)
 
-INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/include)
+INCLUDE_DIRECTORIES(
+  ${PROJECT_SOURCE_DIR}/include
+  ${PROJECT_SOURCE_DIR}/vendor/blake2b/include
+  )
 
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Wpedantic")
 SET(CMAKE_DEBUG_POSTFIX _debug)
@@ -9,11 +12,17 @@ SET(CMAKE_DEBUG_POSTFIX _debug)
 SET(FLEE_LIB_SRCS
   src/tun.c
   src/util.c
+  src/crypto.c
   )
 
 SET(FLEE_CLI_SRCS
   src/main.c
   )
+
+# dependencies
+ADD_SUBDIRECTORY(vendor/blake2b)
+
+FIND_LIBRARY(SODIUM_LIB sodium)
 
 # libflee
 ADD_LIBRARY(flee-static STATIC ${FLEE_LIB_SRCS})
@@ -25,8 +34,10 @@ SET_TARGET_PROPERTIES(flee-static PROPERTIES C_STANDARD 99)
 SET_TARGET_PROPERTIES(flee-shared PROPERTIES OUTPUT_NAME "flee")
 SET_TARGET_PROPERTIES(flee-shared PROPERTIES C_STANDARD 99)
 
-TARGET_LINK_LIBRARIES(flee-static sodium)
-TARGET_LINK_LIBRARIES(flee-shared sodium)
+TARGET_LINK_LIBRARIES(flee-static ${SODIUM_LIB})
+TARGET_LINK_LIBRARIES(flee-shared ${SODIUM_LIB})
+TARGET_LINK_LIBRARIES(flee-static blake2b-static)
+TARGET_LINK_LIBRARIES(flee-shared blake2b-shared)
 
 # flee CLI
 ADD_EXECUTABLE(flee-cli ${FLEE_CLI_SRCS})

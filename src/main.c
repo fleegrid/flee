@@ -22,7 +22,14 @@ int main(int argc _unused, char **argv _unused) {
          tun.dst_ip[1], tun.dst_ip[2], tun.dst_ip[3], tun.netmask[0],
          tun.netmask[1], tun.netmask[2], tun.netmask[3]);
   printf("result: %d\n", ret);
-  sleep(100);
   fl_tun_deinit(&tun);
+
+  fl_crypto crypto = fl_crypto_empty;
+  fl_crypto_init(&crypto);
+  fl_crypto_set_key(&crypto, "hello");
+  for (int i = 0; i < fl_crypto_key_bytes; i++) {
+    printf("%02x", crypto.key[i]);
+  }
+  fl_crypto_deinit(&crypto);
   return 0;
 }

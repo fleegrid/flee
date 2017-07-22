@@ -9,13 +9,15 @@
 #define _FLEE_COMMON_H_
 
 #include <flee/error.h>
+#include <flee/util.h>
+#include <sys/types.h>
 
-/**
+/*
  * unused parameter
  */
 #define _unused __attribute__((unused))
 
-/**
+/*
  * platform determination
  */
 #if defined(__APPLE__) && defined(__MACH__)
@@ -28,6 +30,13 @@
 #error "platform not supported"
 #endif
 
-#include <flee/util.h>
+/*
+ * extern
+ */
+#ifdef __FL_LIB_SOURCE__
+#define FL_EXTERN
+#else
+#define FL_EXTERN extern
+#endif
 
 #endif /* _FLEE_COMMON_H_ */

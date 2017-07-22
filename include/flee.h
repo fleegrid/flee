@@ -9,6 +9,7 @@
 #define _FLEE_H_
 
 #include <flee/common.h>
+#include <flee/crypto.h>
 #include <flee/tun.h>
 
 #endif /* _FLEE_H_ */
