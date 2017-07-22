@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		9427714C1F2379C6007EB726 /* libsodium.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9427714B1F2379C6007EB726 /* libsodium.a */; };
+		9427714E1F23A33E007EB726 /* libuv.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9427714D1F23A33E007EB726 /* libuv.a */; };
 		94C78D4A1F2264B200070279 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 94C78D471F2264B200070279 /* main.c */; };
 		94C78D4B1F2264B200070279 /* tun.c in Sources */ = {isa = PBXBuildFile; fileRef = 94C78D481F2264B200070279 /* tun.c */; };
 		94C78D4C1F2264B200070279 /* util.c in Sources */ = {isa = PBXBuildFile; fileRef = 94C78D491F2264B200070279 /* util.c */; };
@@ -29,6 +30,7 @@
 
 /* Begin PBXFileReference section */
 		9427714B1F2379C6007EB726 /* libsodium.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsodium.a; path = deps/lib/libsodium.a; sourceTree = "<group>"; };
+		9427714D1F23A33E007EB726 /* libuv.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libuv.a; path = deps/lib/libuv.a; sourceTree = "<group>"; };
 		9461A1351F2210CF00FB6A7F /* flee */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = flee; sourceTree = BUILT_PRODUCTS_DIR; };
 		9461A1421F22113300FB6A7F /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
 		9461A1431F22113300FB6A7F /* tun.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tun.h; sourceTree = "<group>"; };
@@ -48,6 +50,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9427714E1F23A33E007EB726 /* libuv.a in Frameworks */,
 				9427714C1F2379C6007EB726 /* libsodium.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -58,6 +61,7 @@
 		9427714A1F2379C6007EB726 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				9427714D1F23A33E007EB726 /* libuv.a */,
 				9427714B1F2379C6007EB726 /* libsodium.a */,
 			);
 			name = Frameworks;

@@ -14,11 +14,6 @@
 #include <stdint.h>
 
 /*
- * unused parameter
- */
-#define _unused __attribute__((unused))
-
-/*
  * platform determination
  */
 #if defined(__APPLE__) && defined(__MACH__)

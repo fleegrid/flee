@@ -4,15 +4,14 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.2)
 INCLUDE_DIRECTORIES(
   ${PROJECT_SOURCE_DIR}/include
   ${PROJECT_SOURCE_DIR}/deps/include
-  )
+)
 
 # configs
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -Wall -Wextra -Wpedantic -O3")
 SET(CMAKE_DEBUG_POSTFIX _debug)
-
-# dependencies
 INCLUDE(ExternalProject)
 
+# libsodium
 EXTERNALPROJECT_ADD(
   libsodium
   PREFIX ${PROJECT_SOURCE_DIR}/deps
@@ -31,13 +30,32 @@ ADD_DEPENDENCIES(sodium-shared libsodium)
 SET_TARGET_PROPERTIES(sodium-static PROPERTIES IMPORTED_LOCATION ${PROJECT_SOURCE_DIR}/deps/lib/${CMAKE_STATIC_LIBRARY_PREFIX}sodium${CMAKE_STATIC_LIBRARY_SUFFIX})
 SET_TARGET_PROPERTIES(sodium-shared PROPERTIES IMPORTED_LOCATION ${PROJECT_SOURCE_DIR}/deps/lib/${CMAKE_SHARED_LIBRARY_PREFIX}sodium${CMAKE_SHARED_LIBRARY_SUFFIX})
 
+# libuv
+EXTERNALPROJECT_ADD(
+  libuv
+  PREFIX ${PROJECT_SOURCE_DIR}/deps
+  URL http://dist.libuv.org/dist/v1.13.1/libuv-v1.13.1.tar.gz
+  URL_MD5 9ab8ef536c014e1e171b67a4d6c28e01
+  CONFIGURE_COMMAND sh ${PROJECT_SOURCE_DIR}/deps/src/libuv/autogen.sh && ${PROJECT_SOURCE_DIR}/deps/src/libuv/configure --prefix=${PROJECT_SOURCE_DIR}/deps
+  BUILD_COMMAND make
+)
+
+ADD_LIBRARY(uv-static STATIC IMPORTED)
+ADD_LIBRARY(uv-shared SHARED IMPORTED)
+
+ADD_DEPENDENCIES(uv-static libuv)
+ADD_DEPENDENCIES(uv-shared libuv)
+
+SET_TARGET_PROPERTIES(uv-static PROPERTIES IMPORTED_LOCATION ${PROJECT_SOURCE_DIR}/deps/lib/${CMAKE_STATIC_LIBRARY_PREFIX}uv${CMAKE_STATIC_LIBRARY_SUFFIX})
+SET_TARGET_PROPERTIES(uv-shared PROPERTIES IMPORTED_LOCATION ${PROJECT_SOURCE_DIR}/deps/lib/${CMAKE_SHARED_LIBRARY_PREFIX}uv${CMAKE_SHARED_LIBRARY_SUFFIX})
+
 # libflee
 SET(FLEE_LIB_SRCS
   src/tun.c
   src/util.c
   src/crypto.c
   src/common.c
-  )
+)
 
 ADD_LIBRARY(flee-static STATIC ${FLEE_LIB_SRCS})
 ADD_LIBRARY(flee-shared SHARED ${FLEE_LIB_SRCS})
@@ -46,16 +64,19 @@ SET_TARGET_PROPERTIES(flee-static PROPERTIES OUTPUT_NAME "flee")
 SET_TARGET_PROPERTIES(flee-shared PROPERTIES OUTPUT_NAME "flee")
 
 TARGET_LINK_LIBRARIES(flee-static sodium-static)
+TARGET_LINK_LIBRARIES(flee-static uv-static)
 TARGET_LINK_LIBRARIES(flee-shared sodium-shared)
+TARGET_LINK_LIBRARIES(flee-shared uv-shared)
 
 # flee
 SET(FLEE_CLI_SRCS
   src/main.c
-  )
+)
 
 ADD_EXECUTABLE(flee-cli ${FLEE_CLI_SRCS})
 
 SET_TARGET_PROPERTIES(flee-cli PROPERTIES OUTPUT_NAME "flee")
 
-TARGET_LINK_LIBRARIES(flee-cli flee-static)
 TARGET_LINK_LIBRARIES(flee-cli sodium-static)
+TARGET_LINK_LIBRARIES(flee-cli uv-static)
+TARGET_LINK_LIBRARIES(flee-cli flee-static)
