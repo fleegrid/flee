@@ -27,10 +27,18 @@ int main(int argc _unused, char **argv _unused) {
   fl_tun_deinit(&tun);
 
   fl_crypto crypto = fl_crypto_empty;
-  fl_crypto_init(&crypto);
-  fl_crypto_set_key(&crypto, "hello");
+  fl_crypto_init(&crypto, "hello");
+  fl_crypto_new_subkey(&crypto);
   for (int i = 0; i < fl_crypto_key_bytes; i++) {
     printf("%02x", crypto.key[i]);
+  }
+  printf("\n");
+  for (int i = 0; i < fl_crypto_salt_bytes; i++) {
+    printf("%02x", crypto.salt[i]);
+  }
+  printf("\n");
+  for (int i = 0; i < fl_crypto_key_bytes; i++) {
+    printf("%02x", crypto.subkey[i]);
   }
   fl_crypto_deinit(&crypto);
   return 0;

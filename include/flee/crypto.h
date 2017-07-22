@@ -45,9 +45,9 @@ typedef struct {
   (fl_crypto) { .key = NULL, .subkey = NULL, .salt = NULL, .nonce = NULL }
 
 /**
- * allocate key, salt, nonce for given cipher
+ * allocate key, salt, nonce for given cipher, set masterkey with BLAKE2b
  */
-void fl_crypto_init(fl_crypto *crypto);
+fl_err fl_crypto_init(fl_crypto *crypto, char *passwd);
 
 /**
  * dealloc key, salt, nonce for crypto
@@ -55,18 +55,25 @@ void fl_crypto_init(fl_crypto *crypto);
 void fl_crypto_deinit(fl_crypto *crypto);
 
 /**
- * set crypto key from a plain password, using BLAKE2b
- */
-fl_err fl_crypto_set_key(fl_crypto *crypto, char *passwd);
-
-/**
  * create a new salt and derive the subkey, using BLAKE2b
  */
 fl_err fl_crypto_new_subkey(fl_crypto *crypto);
 
-/*
+/**
  * resume a subkey from a given salt, using BLAKE2b
  */
 fl_err fl_crypto_resume_subkey(fl_crypto *crypto, unsigned char *salt);
+
+/**
+ * increase nonce value by 1, (little-endian, auto overflowed)
+ */
+void fl_crypto_increase_nonce(fl_crypto *crypto);
+
+/**
+ * encrypt 'dataout' is at least 'in_len' + 'fl_crypto_overhead_bytes' length
+ */
+fl_err fl_crypto_encrypt(fl_crypto *crypto, unsigned char *datain,
+                         unsigned char inlen, unsigned char *dataout,
+                         unsigned long long *outlen);
 
 #endif /* _FLEE_CRYPTO_H_ */

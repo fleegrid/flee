@@ -42,6 +42,6 @@ typedef int fl_err;
 
 // if RET is not 0, then assign ERR to err_crypto and goto LABEL
 #define require_crypto(RET, ERR, LABEL)                                        \
-  require(RET >= 0, ERR = err_crypto, LABEL)
+  require(RET == 0, ERR = err_crypto, LABEL)
 
 #endif /* _FLEE_ERROR_H_ */
