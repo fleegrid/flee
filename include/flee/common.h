@@ -39,4 +39,9 @@
 #define FL_EXTERN extern
 #endif
 
+/**
+ * initialize internal
+ */
+fl_err fl_init();
+
 #endif /* _FLEE_COMMON_H_ */

@@ -11,7 +11,7 @@
 		94C78D4B1F2264B200070279 /* tun.c in Sources */ = {isa = PBXBuildFile; fileRef = 94C78D481F2264B200070279 /* tun.c */; };
 		94C78D4C1F2264B200070279 /* util.c in Sources */ = {isa = PBXBuildFile; fileRef = 94C78D491F2264B200070279 /* util.c */; };
 		94C78D521F226D0300070279 /* crypto.c in Sources */ = {isa = PBXBuildFile; fileRef = 94C78D511F226D0300070279 /* crypto.c */; };
-		94C78D5B1F230B2300070279 /* blake2b.c in Sources */ = {isa = PBXBuildFile; fileRef = 94C78D591F230B2300070279 /* blake2b.c */; };
+		94C78DB21F235EFC00070279 /* common.c in Sources */ = {isa = PBXBuildFile; fileRef = 94C78DB11F235EFC00070279 /* common.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -38,9 +38,7 @@
 		94C78D491F2264B200070279 /* util.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = util.c; sourceTree = "<group>"; };
 		94C78D4D1F2266C200070279 /* crypto.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = crypto.h; sourceTree = "<group>"; };
 		94C78D511F226D0300070279 /* crypto.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = crypto.c; sourceTree = "<group>"; };
-		94C78D551F230B2300070279 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
-		94C78D591F230B2300070279 /* blake2b.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = blake2b.c; sourceTree = "<group>"; };
-		94C78D5C1F230BA800070279 /* blake2b.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = blake2b.h; sourceTree = "<group>"; };
+		94C78DB11F235EFC00070279 /* common.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = common.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,7 +57,6 @@
 			children = (
 				9461A1401F22113300FB6A7F /* include */,
 				94C78D461F2264B200070279 /* src */,
-				94C78D531F230B2300070279 /* vendor */,
 				9461A1361F2210CF00FB6A7F /* Products */,
 			);
 			sourceTree = "<group>";
@@ -100,40 +97,7 @@
 				94C78D481F2264B200070279 /* tun.c */,
 				94C78D491F2264B200070279 /* util.c */,
 				94C78D511F226D0300070279 /* crypto.c */,
-			);
-			path = src;
-			sourceTree = "<group>";
-		};
-		94C78D531F230B2300070279 /* vendor */ = {
-			isa = PBXGroup;
-			children = (
-				94C78D541F230B2300070279 /* blake2b */,
-			);
-			path = vendor;
-			sourceTree = "<group>";
-		};
-		94C78D541F230B2300070279 /* blake2b */ = {
-			isa = PBXGroup;
-			children = (
-				94C78D551F230B2300070279 /* CMakeLists.txt */,
-				94C78D561F230B2300070279 /* include */,
-				94C78D571F230B2300070279 /* src */,
-			);
-			path = blake2b;
-			sourceTree = "<group>";
-		};
-		94C78D561F230B2300070279 /* include */ = {
-			isa = PBXGroup;
-			children = (
-				94C78D5C1F230BA800070279 /* blake2b.h */,
-			);
-			path = include;
-			sourceTree = "<group>";
-		};
-		94C78D571F230B2300070279 /* src */ = {
-			isa = PBXGroup;
-			children = (
-				94C78D591F230B2300070279 /* blake2b.c */,
+				94C78DB11F235EFC00070279 /* common.c */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -198,8 +162,8 @@
 				94C78D4A1F2264B200070279 /* main.c in Sources */,
 				94C78D4B1F2264B200070279 /* tun.c in Sources */,
 				94C78D521F226D0300070279 /* crypto.c in Sources */,
-				94C78D5B1F230B2300070279 /* blake2b.c in Sources */,
 				94C78D4C1F2264B200070279 /* util.c in Sources */,
+				94C78DB21F235EFC00070279 /* common.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -301,7 +265,9 @@
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/include",
 					/usr/local/include/,
+					"$(SRCROOT)/vendor/chapo/include",
 					"$(SRCROOT)/vendor/blake2b/include",
+					"$(SRCROOT)/vendor/chapo/src",
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -314,7 +280,9 @@
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/include",
 					/usr/local/include/,
+					"$(SRCROOT)/vendor/chapo/include",
 					"$(SRCROOT)/vendor/blake2b/include",
+					"$(SRCROOT)/vendor/chapo/src",
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";

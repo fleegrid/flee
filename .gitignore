@@ -64,6 +64,7 @@ CTestTestfile.cmake
 
 # Build
 build/
+deps/
 
 # Xcode
 #

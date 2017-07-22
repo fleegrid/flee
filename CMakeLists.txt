@@ -3,28 +3,42 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.2)
 
 INCLUDE_DIRECTORIES(
   ${PROJECT_SOURCE_DIR}/include
-  ${PROJECT_SOURCE_DIR}/vendor/blake2b/include
+  ${PROJECT_SOURCE_DIR}/deps/include
   )
 
-SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Wpedantic")
+# configs
+SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Wpedantic -O3")
 SET(CMAKE_DEBUG_POSTFIX _debug)
 
+# dependencies
+INCLUDE(ExternalProject)
+
+EXTERNALPROJECT_ADD(
+  libsodium
+  PREFIX ${PROJECT_SOURCE_DIR}/deps
+  URL https://download.libsodium.org/libsodium/releases/libsodium-1.0.13.tar.gz
+  URL_MD5 f38aac160a4bd05f06f743863e54e499
+  CONFIGURE_COMMAND ${PROJECT_SOURCE_DIR}/deps/src/libsodium/configure --prefix=${PROJECT_SOURCE_DIR}/deps
+  BUILD_COMMAND make
+)
+
+ADD_LIBRARY(sodium-static STATIC IMPORTED)
+ADD_LIBRARY(sodium-shared SHARED IMPORTED)
+
+ADD_DEPENDENCIES(sodium-static libsodium)
+ADD_DEPENDENCIES(sodium-shared libsodium)
+
+SET_TARGET_PROPERTIES(sodium-static PROPERTIES IMPORTED_LOCATION ${PROJECT_SOURCE_DIR}/deps/lib/${CMAKE_STATIC_LIBRARY_PREFIX}sodium${CMAKE_STATIC_LIBRARY_SUFFIX})
+SET_TARGET_PROPERTIES(sodium-shared PROPERTIES IMPORTED_LOCATION ${PROJECT_SOURCE_DIR}/deps/lib/${CMAKE_SHARED_LIBRARY_PREFIX}sodium${CMAKE_SHARED_LIBRARY_SUFFIX})
+
+# libflee
 SET(FLEE_LIB_SRCS
   src/tun.c
   src/util.c
   src/crypto.c
+  src/common.c
   )
 
-SET(FLEE_CLI_SRCS
-  src/main.c
-  )
-
-# dependencies
-ADD_SUBDIRECTORY(vendor/blake2b)
-
-FIND_LIBRARY(SODIUM_LIB sodium)
-
-# libflee
 ADD_LIBRARY(flee-static STATIC ${FLEE_LIB_SRCS})
 ADD_LIBRARY(flee-shared SHARED ${FLEE_LIB_SRCS})
 
@@ -34,14 +48,19 @@ SET_TARGET_PROPERTIES(flee-static PROPERTIES C_STANDARD 99)
 SET_TARGET_PROPERTIES(flee-shared PROPERTIES OUTPUT_NAME "flee")
 SET_TARGET_PROPERTIES(flee-shared PROPERTIES C_STANDARD 99)
 
-TARGET_LINK_LIBRARIES(flee-static ${SODIUM_LIB})
-TARGET_LINK_LIBRARIES(flee-shared ${SODIUM_LIB})
-TARGET_LINK_LIBRARIES(flee-static blake2b-static)
-TARGET_LINK_LIBRARIES(flee-shared blake2b-shared)
+TARGET_LINK_LIBRARIES(flee-static sodium-static)
+TARGET_LINK_LIBRARIES(flee-shared sodium-shared)
 
-# flee CLI
+# flee
+SET(FLEE_CLI_SRCS
+  src/main.c
+  )
+
 ADD_EXECUTABLE(flee-cli ${FLEE_CLI_SRCS})
+
 SET_TARGET_PROPERTIES(flee-cli PROPERTIES OUTPUT_NAME "flee")
 SET_TARGET_PROPERTIES(flee-cli PROPERTIES C_STANDARD 99)
 
 TARGET_LINK_LIBRARIES(flee-cli flee-static)
+TARGET_LINK_LIBRARIES(flee-cli sodium-static)
+

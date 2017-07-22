@@ -10,6 +10,8 @@
 #include <unistd.h>
 
 int main(int argc _unused, char **argv _unused) {
+  fl_init();
+
   fl_tun tun = fl_tun_empty;
   fl_ip_set(tun.ip, "10.10.10.1");
   fl_ip_set(tun.dst_ip, "10.10.10.2");
