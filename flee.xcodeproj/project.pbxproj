@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9427714C1F2379C6007EB726 /* libsodium.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9427714B1F2379C6007EB726 /* libsodium.a */; };
 		94C78D4A1F2264B200070279 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 94C78D471F2264B200070279 /* main.c */; };
 		94C78D4B1F2264B200070279 /* tun.c in Sources */ = {isa = PBXBuildFile; fileRef = 94C78D481F2264B200070279 /* tun.c */; };
 		94C78D4C1F2264B200070279 /* util.c in Sources */ = {isa = PBXBuildFile; fileRef = 94C78D491F2264B200070279 /* util.c */; };
@@ -27,6 +28,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		9427714B1F2379C6007EB726 /* libsodium.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsodium.a; path = deps/lib/libsodium.a; sourceTree = "<group>"; };
 		9461A1351F2210CF00FB6A7F /* flee */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = flee; sourceTree = BUILT_PRODUCTS_DIR; };
 		9461A1421F22113300FB6A7F /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
 		9461A1431F22113300FB6A7F /* tun.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tun.h; sourceTree = "<group>"; };
@@ -46,18 +48,28 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9427714C1F2379C6007EB726 /* libsodium.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9427714A1F2379C6007EB726 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				9427714B1F2379C6007EB726 /* libsodium.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		9461A12C1F2210CF00FB6A7F = {
 			isa = PBXGroup;
 			children = (
 				9461A1401F22113300FB6A7F /* include */,
 				94C78D461F2264B200070279 /* src */,
 				9461A1361F2210CF00FB6A7F /* Products */,
+				9427714A1F2379C6007EB726 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -263,13 +275,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/deps/include",
 					"$(SRCROOT)/include",
-					/usr/local/include/,
-					"$(SRCROOT)/vendor/chapo/include",
-					"$(SRCROOT)/vendor/blake2b/include",
-					"$(SRCROOT)/vendor/chapo/src",
 				);
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/deps/lib",
+					"$(PROJECT_DIR)/deps/lib",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -278,13 +291,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/deps/include",
 					"$(SRCROOT)/include",
-					/usr/local/include/,
-					"$(SRCROOT)/vendor/chapo/include",
-					"$(SRCROOT)/vendor/blake2b/include",
-					"$(SRCROOT)/vendor/chapo/src",
 				);
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/deps/lib",
+					"$(PROJECT_DIR)/deps/lib",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
