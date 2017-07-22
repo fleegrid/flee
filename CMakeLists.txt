@@ -1,83 +1,93 @@
-PROJECT(flee)
-CMAKE_MINIMUM_REQUIRED(VERSION 3.2)
+project(flee)
+cmake_minimum_required(VERSION 3.2)
 
-INCLUDE_DIRECTORIES(
-  ${PROJECT_SOURCE_DIR}/include
-  ${PROJECT_SOURCE_DIR}/deps/include
-)
+include(relic.cmake)
+
+include_directories(${PROJECT_SOURCE_DIR}/include)
 
 # configs
-SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99 -Wall -Wextra -Wpedantic -O3")
-SET(CMAKE_DEBUG_POSTFIX _debug)
-INCLUDE(ExternalProject)
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99 -Wall -Wextra -Wpedantic -O3")
+set(CMAKE_DEBUG_POSTFIX _debug)
 
 # libsodium
-EXTERNALPROJECT_ADD(
+externalproject_add(
   libsodium
-  PREFIX ${PROJECT_SOURCE_DIR}/deps
+  PREFIX ${RELIC_PREFIX}
   URL https://download.libsodium.org/libsodium/releases/libsodium-1.0.13.tar.gz
   URL_MD5 f38aac160a4bd05f06f743863e54e499
-  CONFIGURE_COMMAND ${PROJECT_SOURCE_DIR}/deps/src/libsodium/configure --prefix=${PROJECT_SOURCE_DIR}/deps
+  CONFIGURE_COMMAND ${RELIC_SRC_DIR}/libsodium/configure --prefix=${RELIC_PREFIX}
   BUILD_COMMAND make
 )
 
-ADD_LIBRARY(sodium-static STATIC IMPORTED)
-ADD_LIBRARY(sodium-shared SHARED IMPORTED)
+relic_static_library(sodium libsodium sodium)
+relic_shared_library(sodium libsodium sodium)
 
-ADD_DEPENDENCIES(sodium-static libsodium)
-ADD_DEPENDENCIES(sodium-shared libsodium)
-
-SET_TARGET_PROPERTIES(sodium-static PROPERTIES IMPORTED_LOCATION ${PROJECT_SOURCE_DIR}/deps/lib/${CMAKE_STATIC_LIBRARY_PREFIX}sodium${CMAKE_STATIC_LIBRARY_SUFFIX})
-SET_TARGET_PROPERTIES(sodium-shared PROPERTIES IMPORTED_LOCATION ${PROJECT_SOURCE_DIR}/deps/lib/${CMAKE_SHARED_LIBRARY_PREFIX}sodium${CMAKE_SHARED_LIBRARY_SUFFIX})
-
-# libuv
-EXTERNALPROJECT_ADD(
-  libuv
-  PREFIX ${PROJECT_SOURCE_DIR}/deps
-  URL http://dist.libuv.org/dist/v1.13.1/libuv-v1.13.1.tar.gz
-  URL_MD5 9ab8ef536c014e1e171b67a4d6c28e01
-  CONFIGURE_COMMAND sh ${PROJECT_SOURCE_DIR}/deps/src/libuv/autogen.sh && ${PROJECT_SOURCE_DIR}/deps/src/libuv/configure --prefix=${PROJECT_SOURCE_DIR}/deps
+# libevent
+externalproject_add(
+  libevent
+  PREFIX ${RELIC_PREFIX}
+  URL https://github.com/libevent/libevent/releases/download/release-2.1.8-stable/libevent-2.1.8-stable.tar.gz
+  URL_MD5 f3eeaed018542963b7d2416ef1135ecc
+  CONFIGURE_COMMAND ${RELIC_SRC_DIR}/libevent/configure --prefix=${RELIC_PREFIX} --disable-openssl
   BUILD_COMMAND make
 )
 
-ADD_LIBRARY(uv-static STATIC IMPORTED)
-ADD_LIBRARY(uv-shared SHARED IMPORTED)
-
-ADD_DEPENDENCIES(uv-static libuv)
-ADD_DEPENDENCIES(uv-shared libuv)
-
-SET_TARGET_PROPERTIES(uv-static PROPERTIES IMPORTED_LOCATION ${PROJECT_SOURCE_DIR}/deps/lib/${CMAKE_STATIC_LIBRARY_PREFIX}uv${CMAKE_STATIC_LIBRARY_SUFFIX})
-SET_TARGET_PROPERTIES(uv-shared PROPERTIES IMPORTED_LOCATION ${PROJECT_SOURCE_DIR}/deps/lib/${CMAKE_SHARED_LIBRARY_PREFIX}uv${CMAKE_SHARED_LIBRARY_SUFFIX})
+relic_static_library(event-core libevent event_core)
+relic_static_library(event-extra libevent event_extra)
+relic_static_library(event-pthread libevent event_pthreads)
+relic_shared_library(event-core libevent event_core)
+relic_shared_library(event-extra libevent event_extra)
+relic_shared_library(event-pthread libevent event_pthreads)
 
 # libflee
-SET(FLEE_LIB_SRCS
+set(FLEE_LIB_SRCS
   src/tun.c
   src/util.c
   src/crypto.c
   src/common.c
+  src/client.c
 )
 
-ADD_LIBRARY(flee-static STATIC ${FLEE_LIB_SRCS})
-ADD_LIBRARY(flee-shared SHARED ${FLEE_LIB_SRCS})
+add_library(flee-static STATIC ${FLEE_LIB_SRCS})
+add_library(flee-shared SHARED ${FLEE_LIB_SRCS})
 
-SET_TARGET_PROPERTIES(flee-static PROPERTIES OUTPUT_NAME "flee")
-SET_TARGET_PROPERTIES(flee-shared PROPERTIES OUTPUT_NAME "flee")
+set_target_properties(flee-static PROPERTIES OUTPUT_NAME "flee")
+set_target_properties(flee-shared PROPERTIES OUTPUT_NAME "flee")
 
-TARGET_LINK_LIBRARIES(flee-static sodium-static)
-TARGET_LINK_LIBRARIES(flee-static uv-static)
-TARGET_LINK_LIBRARIES(flee-shared sodium-shared)
-TARGET_LINK_LIBRARIES(flee-shared uv-shared)
+target_link_libraries(
+  flee-static
+
+  sodium-static
+  event-core-static
+  event-extra-static
+  event-pthread-static
+)
+
+target_link_libraries(
+  flee-shared
+
+  sodium-shared
+  event-core-shared
+  event-extra-shared
+  event-pthread-shared
+)
 
 # flee
 SET(FLEE_CLI_SRCS
   src/main.c
 )
 
-ADD_EXECUTABLE(flee-cli ${FLEE_CLI_SRCS})
+add_executable(flee-cli ${FLEE_CLI_SRCS})
 
-SET_TARGET_PROPERTIES(flee-cli PROPERTIES OUTPUT_NAME "flee")
+set_target_properties(flee-cli PROPERTIES OUTPUT_NAME "flee")
 
-TARGET_LINK_LIBRARIES(flee-cli sodium-static)
-TARGET_LINK_LIBRARIES(flee-cli uv-static)
-TARGET_LINK_LIBRARIES(flee-cli flee-static)
-TARGET_LINK_LIBRARIES(flee-cli pthread)
+target_link_libraries(
+  flee-cli
+
+  sodium-static
+  flee-static
+  event-core-static
+  event-extra-static
+  event-pthread-static
+  pthread
+)

@@ -11,8 +11,6 @@
 #include <flee/error.h>
 #include <flee/util.h>
 
-#include <stdint.h>
-
 /**
  * __unsued
  */
