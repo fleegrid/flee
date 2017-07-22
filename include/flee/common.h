@@ -13,6 +13,13 @@
 
 #include <stdint.h>
 
+/**
+ * __unsued
+ */
+#ifndef __unused
+#define __unused __attribute__((unused))
+#endif
+
 /*
  * platform determination
  */

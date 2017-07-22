@@ -7,7 +7,7 @@ INCLUDE_DIRECTORIES(
 )
 
 # configs
-SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -Wall -Wextra -Wpedantic -O3")
+SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99 -Wall -Wextra -Wpedantic -O3")
 SET(CMAKE_DEBUG_POSTFIX _debug)
 INCLUDE(ExternalProject)
 
@@ -80,3 +80,4 @@ SET_TARGET_PROPERTIES(flee-cli PROPERTIES OUTPUT_NAME "flee")
 TARGET_LINK_LIBRARIES(flee-cli sodium-static)
 TARGET_LINK_LIBRARIES(flee-cli uv-static)
 TARGET_LINK_LIBRARIES(flee-cli flee-static)
+TARGET_LINK_LIBRARIES(flee-cli pthread)

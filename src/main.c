@@ -96,17 +96,18 @@ int main(int argc __unused, char **argv __unused) {
   }
   printf("\n");
   char *plain = "hello, world";
-  uint8_t cipher[strlen(plain) + fl_crypto_overhead_bytes];
-  uint64_t cl = 0;
-  fl_crypto_encrypt(&crypto, (uint8_t *)plain, strlen(plain), cipher, &cl);
+  unsigned char cipher[strlen(plain) + fl_crypto_overhead_bytes];
+  unsigned long long cl = 0;
+  fl_crypto_encrypt(&crypto, (unsigned char *)plain, strlen(plain), cipher,
+                    &cl);
   printf("Crlen: %llu", cl);
   printf("\n");
   for (int i = 0; i < (int)cl; i++) {
     printf("%02x", cipher[i]);
   }
   printf("\n");
-  uint8_t p[strlen(plain)];
-  uint64_t pl = 0;
+  unsigned char p[strlen(plain)];
+  unsigned long long pl = 0;
   fl_crypto_decrypt(&crypto, cipher, cl, p, &pl);
   for (int i = 0; i < (int)pl; i++) {
     printf("%c", p[i]);

@@ -15,7 +15,7 @@
 /**
  * fl_ip is a 32-bit IPv4 address
  */
-typedef uint8_t fl_ip[4];
+typedef unsigned char fl_ip[4];
 
 /**
  * parse a A.B.C.D IP string

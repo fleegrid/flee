@@ -25,9 +25,9 @@ const int fl_crypto_overhead_bytes = crypto_aead_chacha20poly1305_ietf_ABYTES;
 fl_err fl_crypto_set_key(fl_crypto *crypto, char *passwd) {
   fl_err err = err_ok;
   int ret;
-  uint8_t hash[fl_crypto_key_bytes];
+  unsigned char hash[fl_crypto_key_bytes];
   // PASSWD (VARLEN) - BLAKE2b (0) -> MASTER_KEY (32)
-  ret = crypto_generichash_blake2b(hash, sizeof hash, (uint8_t *)passwd,
+  ret = crypto_generichash_blake2b(hash, sizeof hash, (unsigned char *)passwd,
                                    strlen(passwd), NULL, 0);
   require_crypto(ret, err, exit);
   memcpy(crypto->key, hash, fl_crypto_key_bytes);
@@ -52,7 +52,7 @@ fl_err fl_crypto_calculate_subkey(fl_crypto *crypto) {
   fl_err err = err_ok;
   int ret;
   // digest master key with salt
-  uint8_t hash[fl_crypto_key_bytes];
+  unsigned char hash[fl_crypto_key_bytes];
   // MASTER_KEY (32) - BLAKE2b (64) -> SUB_KEY (32)
   ret = crypto_generichash_blake2b(hash, sizeof hash, crypto->key,
                                    fl_crypto_key_bytes, crypto->salt,
@@ -69,7 +69,7 @@ fl_err fl_crypto_new_subkey(fl_crypto *crypto) {
   return fl_crypto_calculate_subkey(crypto);
 }
 
-fl_err fl_crypto_resume_subkey(fl_crypto *crypto, uint8_t *salt) {
+fl_err fl_crypto_resume_subkey(fl_crypto *crypto, unsigned char *salt) {
   // copy salt
   memcpy(crypto->salt, salt, fl_crypto_salt_bytes);
   return fl_crypto_calculate_subkey(crypto);
@@ -84,8 +84,9 @@ void fl_crypto_increase_nonce(fl_crypto *crypto) {
   }
 }
 
-fl_err fl_crypto_encrypt(fl_crypto *crypto, uint8_t *datain, uint64_t inlen,
-                         uint8_t *dataout, uint64_t *outlen) {
+fl_err fl_crypto_encrypt(fl_crypto *crypto, unsigned char *datain,
+                         unsigned long long inlen, unsigned char *dataout,
+                         unsigned long long *outlen) {
   int ret;
   fl_err err = err_ok;
   ret = crypto_aead_chacha20poly1305_ietf_encrypt(
@@ -96,8 +97,9 @@ exit:
   return err;
 }
 
-fl_err fl_crypto_decrypt(fl_crypto *crypto, uint8_t *datain, uint64_t inlen,
-                         uint8_t *dataout, uint64_t *outlen) {
+fl_err fl_crypto_decrypt(fl_crypto *crypto, unsigned char *datain,
+                         unsigned long long inlen, unsigned char *dataout,
+                         unsigned long long *outlen) {
   int ret;
   fl_err err = err_ok;
   ret = crypto_aead_chacha20poly1305_ietf_decrypt(dataout, outlen, NULL, datain,
