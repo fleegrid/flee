@@ -32,13 +32,13 @@ FL_EXTERN int const fl_crypto_overhead_bytes;
  */
 typedef struct {
   // master key
-  unsigned char *key;
+  uint8_t *key;
   // salt for subkey derivation
-  unsigned char *salt;
+  uint8_t *salt;
   // subkey derived from master key
-  unsigned char *subkey;
+  uint8_t *subkey;
   // nonce
-  unsigned char *nonce;
+  uint8_t *nonce;
 } fl_crypto;
 
 #define fl_crypto_empty                                                        \
@@ -62,7 +62,7 @@ fl_err fl_crypto_new_subkey(fl_crypto *crypto);
 /**
  * resume a subkey from a given salt, using BLAKE2b
  */
-fl_err fl_crypto_resume_subkey(fl_crypto *crypto, unsigned char *salt);
+fl_err fl_crypto_resume_subkey(fl_crypto *crypto, uint8_t *salt);
 
 /**
  * increase nonce value by 1, (little-endian, auto overflowed)
@@ -72,8 +72,12 @@ void fl_crypto_increase_nonce(fl_crypto *crypto);
 /**
  * encrypt 'dataout' is at least 'in_len' + 'fl_crypto_overhead_bytes' length
  */
-fl_err fl_crypto_encrypt(fl_crypto *crypto, unsigned char *datain,
-                         unsigned char inlen, unsigned char *dataout,
-                         unsigned long long *outlen);
+fl_err fl_crypto_encrypt(fl_crypto *crypto, uint8_t *datain, uint64_t inlen,
+                         uint8_t *dataout, uint64_t *outlen);
+/**
+ * decrypt 'dataout' is at least 'in_len' length
+ */
+fl_err fl_crypto_decrypt(fl_crypto *crypto, uint8_t *datain, uint64_t inlen,
+                         uint8_t *dataout, uint64_t *outlen);
 
 #endif /* _FLEE_CRYPTO_H_ */

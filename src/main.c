@@ -7,6 +7,7 @@
 
 #include <flee.h>
 #include <stdio.h>
+#include <string.h>
 #include <unistd.h>
 
 int main(int argc _unused, char **argv _unused) {
@@ -40,6 +41,24 @@ int main(int argc _unused, char **argv _unused) {
   for (int i = 0; i < fl_crypto_key_bytes; i++) {
     printf("%02x", crypto.subkey[i]);
   }
+  printf("\n");
+  char *plain = "hello, world";
+  uint8_t cipher[strlen(plain) + fl_crypto_overhead_bytes];
+  uint64_t cl = 0;
+  fl_crypto_encrypt(&crypto, (uint8_t *)plain, strlen(plain), cipher, &cl);
+  printf("Crlen: %llu", cl);
+  printf("\n");
+  for (int i = 0; i < cl; i++) {
+    printf("%02x", cipher[i]);
+  }
+  printf("\n");
+  uint8_t p[strlen(plain)];
+  uint64_t pl = 0;
+  fl_crypto_decrypt(&crypto, cipher, cl, p, &pl);
+  for (int i = 0; i < pl; i++) {
+    printf("%c", p[i]);
+  }
+  printf("\n");
   fl_crypto_deinit(&crypto);
   return 0;
 }

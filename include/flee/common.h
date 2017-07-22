@@ -10,7 +10,8 @@
 
 #include <flee/error.h>
 #include <flee/util.h>
-#include <sys/types.h>
+
+#include <stdint.h>
 
 /*
  * unused parameter
