@@ -64,7 +64,9 @@ CTestTestfile.cmake
 
 # Build
 build/
-deps/
+
+# Vendor
+vendor/
 
 # Xcode
 #
