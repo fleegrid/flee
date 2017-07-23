@@ -1,11 +1,10 @@
-#!/bin/bash
+#!/bin/sh
 
 set -e
 set -u
 
-BUILD=build/$(uname -s | tr "A-Z" "a-z")-$(uname -m | tr "A-Z" "a-z")
+BUILD_DIR=build/$(uname -s | tr "A-Z" "a-z")-$(uname -m | tr "A-Z" "a-z")
 
-mkdir -p $BUILD
-cd $BUILD
-cmake ../..
-make
+mkdir -p $BUILD_DIR
+cd $BUILD_DIR
+cmake ../.. && make

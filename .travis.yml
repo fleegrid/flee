@@ -1,5 +1,5 @@
+sudo: required
+services:
+  - docker
 language: c
-script: ./build.sh
-cache:
-  directories:
-    - vendor
+script: ./build-in-docker.sh
