@@ -11,16 +11,16 @@
 #include <flee/common.h>
 
 // Chapo key/subkey bytes length
-FL_EXTERN int const fl_crypto_key_bytes;
+#define fl_crypto_key_bytes crypto_aead_chacha20poly1305_ietf_KEYBYTES
 
 // BLAKE2b key derivation salt bytes length
-FL_EXTERN int const fl_crypto_salt_bytes;
+#define fl_crypto_salt_bytes crypto_generichash_blake2b_KEYBYTES_MAX
 
 // Chapo per encryption nonce bytes length
-FL_EXTERN int const fl_crypto_nonce_bytes;
+#define fl_crypto_nonce_bytes crypto_aead_chacha20poly1305_ietf_NPUBBYTES
 
 // Chapo max encrypted text bytes length - plain text bytes length
-FL_EXTERN int const fl_crypto_overhead_bytes;
+#define fl_crypto_overhead_bytes crypto_aead_chacha20poly1305_ietf_ABYTES
 
 /**
  * fl_crypto

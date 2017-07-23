@@ -14,7 +14,6 @@
 		942771571F23EDD5007EB726 /* libevent_pthreads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 942771541F23EDD5007EB726 /* libevent_pthreads.a */; };
 		94C78D4A1F2264B200070279 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 94C78D471F2264B200070279 /* main.c */; };
 		94C78D4B1F2264B200070279 /* tun.c in Sources */ = {isa = PBXBuildFile; fileRef = 94C78D481F2264B200070279 /* tun.c */; };
-		94C78D4C1F2264B200070279 /* util.c in Sources */ = {isa = PBXBuildFile; fileRef = 94C78D491F2264B200070279 /* util.c */; };
 		94C78D521F226D0300070279 /* crypto.c in Sources */ = {isa = PBXBuildFile; fileRef = 94C78D511F226D0300070279 /* crypto.c */; };
 		94C78DB21F235EFC00070279 /* common.c in Sources */ = {isa = PBXBuildFile; fileRef = 94C78DB11F235EFC00070279 /* common.c */; };
 /* End PBXBuildFile section */
@@ -44,10 +43,8 @@
 		9461A1431F22113300FB6A7F /* tun.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tun.h; sourceTree = "<group>"; };
 		9461A1441F22113300FB6A7F /* flee.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = flee.h; sourceTree = "<group>"; };
 		9461A1481F221DC900FB6A7F /* error.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = error.h; sourceTree = "<group>"; };
-		9461A1491F222D2D00FB6A7F /* util.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = util.h; sourceTree = "<group>"; };
 		94C78D471F2264B200070279 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		94C78D481F2264B200070279 /* tun.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tun.c; sourceTree = "<group>"; };
-		94C78D491F2264B200070279 /* util.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = util.c; sourceTree = "<group>"; };
 		94C78D4D1F2266C200070279 /* crypto.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = crypto.h; sourceTree = "<group>"; };
 		94C78D511F226D0300070279 /* crypto.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = crypto.c; sourceTree = "<group>"; };
 		94C78DB11F235EFC00070279 /* common.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = common.c; sourceTree = "<group>"; };
@@ -113,7 +110,6 @@
 				9461A1421F22113300FB6A7F /* common.h */,
 				9461A1431F22113300FB6A7F /* tun.h */,
 				9461A1481F221DC900FB6A7F /* error.h */,
-				9461A1491F222D2D00FB6A7F /* util.h */,
 				94C78D4D1F2266C200070279 /* crypto.h */,
 				9427714F1F23C00F007EB726 /* client.h */,
 			);
@@ -125,7 +121,6 @@
 			children = (
 				94C78D471F2264B200070279 /* main.c */,
 				94C78D481F2264B200070279 /* tun.c */,
-				94C78D491F2264B200070279 /* util.c */,
 				94C78D511F226D0300070279 /* crypto.c */,
 				94C78DB11F235EFC00070279 /* common.c */,
 				942771501F23C53E007EB726 /* client.c */,
@@ -194,7 +189,6 @@
 				94C78D4B1F2264B200070279 /* tun.c in Sources */,
 				942771511F23C53E007EB726 /* client.c in Sources */,
 				94C78D521F226D0300070279 /* crypto.c in Sources */,
-				94C78D4C1F2264B200070279 /* util.c in Sources */,
 				94C78DB21F235EFC00070279 /* common.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

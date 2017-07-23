@@ -8,20 +8,6 @@
 #define __FL_LIB_SOURCE__
 #include <flee/crypto.h>
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#include <sodium.h>
-
-const int fl_crypto_key_bytes = crypto_aead_chacha20poly1305_ietf_KEYBYTES;
-
-const int fl_crypto_salt_bytes = crypto_generichash_blake2b_KEYBYTES_MAX;
-
-const int fl_crypto_nonce_bytes = crypto_aead_chacha20poly1305_ietf_NPUBBYTES;
-
-const int fl_crypto_overhead_bytes = crypto_aead_chacha20poly1305_ietf_ABYTES;
-
 fl_err fl_crypto_set_key(fl_crypto *crypto, char *passwd) {
   fl_err err = err_ok;
   int ret;

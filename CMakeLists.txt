@@ -33,16 +33,18 @@ externalproject_add(
 )
 
 relic_static_library(event-core libevent event_core)
-relic_static_library(event-extra libevent event_extra)
-relic_static_library(event-pthread libevent event_pthreads)
 relic_shared_library(event-core libevent event_core)
+relic_static_library(event-extra libevent event_extra)
 relic_shared_library(event-extra libevent event_extra)
+
+if(UNIX)
+relic_static_library(event-pthread libevent event_pthreads)
 relic_shared_library(event-pthread libevent event_pthreads)
+endif()
 
 # libflee
 set(FLEE_LIB_SRCS
   src/tun.c
-  src/util.c
   src/crypto.c
   src/common.c
   src/client.c
@@ -60,7 +62,6 @@ target_link_libraries(
   sodium-static
   event-core-static
   event-extra-static
-  event-pthread-static
 )
 
 target_link_libraries(
@@ -69,8 +70,12 @@ target_link_libraries(
   sodium-shared
   event-core-shared
   event-extra-shared
-  event-pthread-shared
 )
+
+if(UNIX)
+  target_link_libraries(flee-static event-pthread-static)
+  target_link_libraries(flee-shared event-pthread-shared)
+endif()
 
 # flee
 SET(FLEE_CLI_SRCS
@@ -84,10 +89,13 @@ set_target_properties(flee-cli PROPERTIES OUTPUT_NAME "flee")
 target_link_libraries(
   flee-cli
 
-  sodium-static
   flee-static
+  sodium-static
   event-core-static
   event-extra-static
-  event-pthread-static
-  pthread
 )
+
+if(UNIX)
+  target_link_libraries(flee-cli event-pthread-static)
+  target_link_libraries(flee-cli pthread)
+endif()
