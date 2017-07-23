@@ -1,2 +1,5 @@
 language: c
 script: ./build.sh
+cache:
+  directories:
+    - vendor
