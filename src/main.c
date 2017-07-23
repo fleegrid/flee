@@ -6,6 +6,7 @@
 //
 
 #include <flee.h>
+#include <sys/signal.h>
 #include <unistd.h>
 
 struct event_base *base;
