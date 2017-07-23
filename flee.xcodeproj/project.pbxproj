@@ -8,11 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		942771511F23C53E007EB726 /* client.c in Sources */ = {isa = PBXBuildFile; fileRef = 942771501F23C53E007EB726 /* client.c */; };
-		947DA1611F24876E00BB6E27 /* libevent_core.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 947DA15E1F24876E00BB6E27 /* libevent_core.a */; };
-		947DA1621F24876E00BB6E27 /* libevent_extra.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 947DA15F1F24876E00BB6E27 /* libevent_extra.a */; };
-		947DA1631F24876E00BB6E27 /* libevent_pthreads.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 947DA1601F24876E00BB6E27 /* libevent_pthreads.a */; };
-		947DA1651F24877900BB6E27 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 947DA1641F24877900BB6E27 /* libpthread.tbd */; };
-		947DA1671F2487B100BB6E27 /* libsodium.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 947DA1661F2487B100BB6E27 /* libsodium.a */; };
 		94C78D4A1F2264B200070279 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 94C78D471F2264B200070279 /* main.c */; };
 		94C78D4B1F2264B200070279 /* tun.c in Sources */ = {isa = PBXBuildFile; fileRef = 94C78D481F2264B200070279 /* tun.c */; };
 		94C78D521F226D0300070279 /* crypto.c in Sources */ = {isa = PBXBuildFile; fileRef = 94C78D511F226D0300070279 /* crypto.c */; };
@@ -60,11 +55,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				947DA1671F2487B100BB6E27 /* libsodium.a in Frameworks */,
-				947DA1651F24877900BB6E27 /* libpthread.tbd in Frameworks */,
-				947DA1611F24876E00BB6E27 /* libevent_core.a in Frameworks */,
-				947DA1621F24876E00BB6E27 /* libevent_extra.a in Frameworks */,
-				947DA1631F24876E00BB6E27 /* libevent_pthreads.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -299,12 +289,20 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				HEADER_SEARCH_PATHS = (
-					"$(PROJECT_DIR)/vendor/darwin-x86_64/include",
+					"$(inherited)",
 					"$(PROJECT_DIR)/include",
+					/usr/local/include,
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/vendor/darwin-x86_64/lib",
+					/usr/local/lib,
+				);
+				OTHER_LDFLAGS = (
+					"-lpthread",
+					"-levent_pthreads",
+					"-levent_extra",
+					"-levent_core",
+					"-lsodium",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -314,12 +312,20 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				HEADER_SEARCH_PATHS = (
-					"$(PROJECT_DIR)/vendor/darwin-x86_64/include",
+					"$(inherited)",
 					"$(PROJECT_DIR)/include",
+					/usr/local/include,
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/vendor/darwin-x86_64/lib",
+					/usr/local/lib,
+				);
+				OTHER_LDFLAGS = (
+					"-lpthread",
+					"-levent_pthreads",
+					"-levent_extra",
+					"-levent_core",
+					"-lsodium",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
