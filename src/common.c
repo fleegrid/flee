@@ -39,24 +39,9 @@ void fl_libevent_logger(int severity, const char *msg) {
 fl_err fl_init() {
   // initialize sodium, pick best implementation
   if (sodium_init() != 0) {
-    return err_crypto;
+    return fl_ecrypto;
   }
   // set libevent log callback
   event_set_log_callback(&fl_libevent_logger);
-  return err_ok;
-}
-
-fl_err fl_ip_set(fl_ip ip, char *s) {
-  fl_err err = err_ok;
-  int ret = 0;
-  ret = sscanf(s, "%hhu.%hhu.%hhu.%hhu", &ip[0], &ip[1], &ip[2], &ip[3]);
-  require(ret == 4, err = err_ip_invalid, exit);
-exit:
-  return err;
-}
-
-uint32_t fl_ip_to_u(fl_ip ip) {
-  uint32_t ret = 0;
-  memcpy(&ret, ip, sizeof(ret));
-  return ret;
+  return fl_ok;
 }

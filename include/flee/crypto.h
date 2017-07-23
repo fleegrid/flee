@@ -11,16 +11,16 @@
 #include <flee/common.h>
 
 // Chapo key/subkey bytes length
-#define fl_crypto_key_bytes crypto_aead_chacha20poly1305_ietf_KEYBYTES
+#define fl_crypto_key_bytes 32 // crypto_aead_chacha20poly1305_ietf_KEYBYTES
 
 // BLAKE2b key derivation salt bytes length
-#define fl_crypto_salt_bytes crypto_generichash_blake2b_KEYBYTES_MAX
+#define fl_crypto_salt_bytes 64 // crypto_generichash_blake2b_KEYBYTES_MAX
 
 // Chapo per encryption nonce bytes length
-#define fl_crypto_nonce_bytes crypto_aead_chacha20poly1305_ietf_NPUBBYTES
+#define fl_crypto_nonce_bytes 12 // crypto_aead_chacha20poly1305_ietf_NPUBBYTES
 
 // Chapo max encrypted text bytes length - plain text bytes length
-#define fl_crypto_overhead_bytes crypto_aead_chacha20poly1305_ietf_ABYTES
+#define fl_crypto_overhead_bytes 16 // crypto_aead_chacha20poly1305_ietf_ABYTES
 
 /**
  * fl_crypto
@@ -32,37 +32,36 @@
  */
 typedef struct {
   // master key
-  unsigned char *key;
+  unsigned char key[fl_crypto_key_bytes];
   // salt for subkey derivation
-  unsigned char *salt;
+  unsigned char salt[fl_crypto_salt_bytes];
   // subkey derived from master key
-  unsigned char *subkey;
+  unsigned char subkey[fl_crypto_key_bytes];
   // nonce
-  unsigned char *nonce;
+  unsigned char nonce[fl_crypto_nonce_bytes];
 } fl_crypto;
 
-#define fl_crypto_empty                                                        \
-  (fl_crypto) { .key = NULL, .subkey = NULL, .salt = NULL, .nonce = NULL }
+/**
+ * load master key from passwd, using BLAKE2b
+ *
+ * this will also clear subkey, salt and nonce
+ */
+void fl_crypto_init(fl_crypto *crypto, char *passwd);
 
 /**
- * allocate key, salt, nonce for given cipher, set masterkey with BLAKE2b
+ * create a new salt and derivate a subkey
  */
-fl_err fl_crypto_init(fl_crypto *crypto, char *passwd);
+void fl_crypto_new_subkey(fl_crypto *crypto);
 
 /**
- * dealloc key, salt, nonce for crypto
+ * load salt, and derivate a subkey
  */
-void fl_crypto_deinit(fl_crypto *crypto);
+void fl_crypto_load_subkey(fl_crypto *crypto, unsigned char *salt);
 
 /**
- * create a new salt and derive the subkey, using BLAKE2b
+ * reset nonce to full zero
  */
-fl_err fl_crypto_new_subkey(fl_crypto *crypto);
-
-/**
- * resume a subkey from a given salt, using BLAKE2b
- */
-fl_err fl_crypto_resume_subkey(fl_crypto *crypto, unsigned char *salt);
+void fl_crypto_reset_nonce(fl_crypto *crypto);
 
 /**
  * increase nonce value by 1, (little-endian, auto overflowed)
@@ -72,14 +71,14 @@ void fl_crypto_increase_nonce(fl_crypto *crypto);
 /**
  * encrypt 'dataout' is at least 'in_len' + 'fl_crypto_overhead_bytes' length
  */
-fl_err fl_crypto_encrypt(fl_crypto *crypto, unsigned char *datain,
-                         unsigned long long inlen, unsigned char *dataout,
-                         unsigned long long *outlen);
+void fl_crypto_encrypt(fl_crypto *crypto, unsigned char *datain,
+                       unsigned long long inlen, unsigned char *dataout,
+                       unsigned long long *outlen);
 /**
  * decrypt 'dataout' is at least 'in_len' length
  */
-fl_err fl_crypto_decrypt(fl_crypto *crypto, unsigned char *datain,
-                         unsigned long long inlen, unsigned char *dataout,
-                         unsigned long long *outlen);
+bool fl_crypto_decrypt(fl_crypto *crypto, unsigned char *datain,
+                       unsigned long long inlen, unsigned char *dataout,
+                       unsigned long long *outlen);
 
 #endif /* _FLEE_CRYPTO_H_ */

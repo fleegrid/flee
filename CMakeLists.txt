@@ -76,7 +76,9 @@ target_link_libraries(
 
 if(UNIX)
   target_link_libraries(flee-static event-pthread-static)
+  target_link_libraries(flee-static pthread)
   target_link_libraries(flee-shared event-pthread-shared)
+  target_link_libraries(flee-shared pthread)
 endif()
 
 # flee

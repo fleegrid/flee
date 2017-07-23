@@ -27,8 +27,23 @@
 #include <sys/sysctl.h>
 #endif
 
+fl_err fl_ip_set(fl_ip ip, char *s) {
+  fl_err err = fl_ok;
+  int ret = 0;
+  ret = sscanf(s, "%hhu.%hhu.%hhu.%hhu", &ip[0], &ip[1], &ip[2], &ip[3]);
+  require(ret == 4, err = fl_eip, exit);
+exit:
+  return err;
+}
+
+uint32_t fl_ip_to_u(fl_ip ip) {
+  uint32_t ret = 0;
+  memcpy(&ret, ip, sizeof(ret));
+  return ret;
+}
+
 fl_err fl_tun_init(fl_tun *tun) {
-  fl_err err = err_ok;
+  fl_err err = fl_ok;
   int ret;
 #ifdef _FL_DARWIN
   printf("WARN: Use NetworkExtension for TUN implementation on macOS/iOS\n");
@@ -104,7 +119,7 @@ exit:
 }
 
 fl_err fl_tun_deinit(fl_tun *tun) {
-  fl_err err = err_ok;
+  fl_err err = fl_ok;
   int ret;
   if (tun->fd > 0) {
     ret = close(tun->fd);
