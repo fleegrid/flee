@@ -6,6 +6,7 @@
 //
 
 #define __FL_LIB_SOURCE__
+#include <flee/internal.h>
 #include <flee/tun.h>
 
 #include <stdio.h>
@@ -20,11 +21,10 @@
 #include <sys/syscall.h>
 #include <sys/types.h>
 
-#ifdef _FL_DARWIN
+#ifdef __FL_DARWIN
 #include <net/if_utun.h>
 #include <sys/kern_control.h>
 #include <sys/kern_event.h>
-#include <sys/sysctl.h>
 #endif
 
 fl_err fl_ip_set(fl_ip ip, char *s) {
@@ -45,7 +45,7 @@ uint32_t fl_ip_to_u(fl_ip ip) {
 fl_err fl_tun_init(fl_tun *tun) {
   fl_err err = fl_ok;
   int ret;
-#ifdef _FL_DARWIN
+#ifdef __FL_DARWIN
   printf("WARN: Use NetworkExtension for TUN implementation on macOS/iOS\n");
 
   struct ctl_info info;
@@ -85,21 +85,21 @@ fl_err fl_tun_init(fl_tun *tun) {
   addr = (struct sockaddr_in *)&req.ifr_addr;
   addr->sin_family = AF_INET;
   addr->sin_port = 0;
-  addr->sin_addr.s_addr = fl_ip_to_u(tun->ip);
+  addr->sin_addr = tun->ip;
   ret = ioctl(fd, SIOCSIFADDR, &req);
   require_syscall(ret, err, exit);
   // set if DSTADDR
   addr = (struct sockaddr_in *)&req.ifr_dstaddr;
   addr->sin_family = AF_INET;
   addr->sin_port = 0;
-  addr->sin_addr.s_addr = fl_ip_to_u(tun->dst_ip);
+  addr->sin_addr = tun->dst_ip;
   ret = ioctl(fd, SIOCSIFDSTADDR, &req);
   require_syscall(ret, err, exit);
   // set netmask
   addr = (struct sockaddr_in *)&req.ifr_addr;
   addr->sin_family = AF_INET;
   addr->sin_port = 0;
-  addr->sin_addr.s_addr = fl_ip_to_u(tun->netmask);
+  addr->sin_addr = tun->netmask;
   ret = ioctl(fd, SIOCSIFNETMASK, &req);
   require_syscall(ret, err, exit);
   // set MTU

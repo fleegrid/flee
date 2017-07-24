@@ -7,6 +7,7 @@
 
 #define __FL_LIB_SOURCE__
 #include <flee/crypto.h>
+#include <flee/internal.h>
 
 #include <sodium.h>
 

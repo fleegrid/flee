@@ -7,6 +7,7 @@
 
 #define __FL_LIB_SOURCE__
 #include <flee/client.h>
+#include <flee/internal.h>
 
 fl_err fl_client_init(fl_client *client, char *passwd, char *host, int port) {
   fl_err err = fl_ok;

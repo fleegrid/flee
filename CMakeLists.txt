@@ -6,7 +6,9 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99 -Wall -Wextra -Wpedantic -O3")
 
 # libflee
-set(FLEE_LIB_SRCS
+set(
+  FLEE_LIB_SRCS
+
   src/tun.c
   src/crypto.c
   src/common.c
@@ -35,13 +37,10 @@ target_link_libraries(
   event_extra
 )
 
-if(UNIX)
-  target_link_libraries(flee-static event_pthreads pthread)
-  target_link_libraries(flee-shared event_pthreads pthread)
-endif()
-
 # flee
-SET(FLEE_CLI_SRCS
+set(
+  FLEE_CLI_SRCS
+
   src/main.c
 )
 
@@ -58,6 +57,20 @@ target_link_libraries(
   event_extra
 )
 
+# platform specified links
+if(UNIX)
+  target_link_libraries(flee-static event_pthreads pthread)
+  target_link_libraries(flee-shared event_pthreads pthread)
+
+  if(CMAKE_SYSTEM_NAME MATCHES "Linux")
+    target_link_libraries(flee-static nftnl)
+    target_link_libraries(flee-shared nftnl)
+  endif()
+endif()
+
 if(UNIX)
   target_link_libraries(flee-cli event_pthreads pthread)
+  if(CMAKE_SYSTEM_NAME MATCHES "Linux")
+    target_link_libraries(flee-cli nftnl)
+  endif()
 endif()

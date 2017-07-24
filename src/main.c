@@ -6,8 +6,12 @@
 //
 
 #include <flee.h>
+#include <flee/internal.h>
+
 #include <signal.h>
 #include <unistd.h>
+
+#include <arpa/inet.h>
 
 struct event_base *base;
 
@@ -44,10 +48,11 @@ int main(int argc __unused, char **argv __unused) {
 
   LOG("Welcome: %s", decrypted);
 
-  fl_client client;
-  fl_client_init(&client, "hello", "yorha.army", 9777);
-
-  DLOG("Address: %s", client.host);
+  fl_tun tun;
+  tun.ip.s_addr = inet_addr("10.10.10.2");
+  tun.dst_ip.s_addr = inet_addr("10.10.10.1");
+  tun.netmask.s_addr = inet_addr("255.255.255.255");
+  fl_tun_init(&tun);
 
   base = event_base_new();
 

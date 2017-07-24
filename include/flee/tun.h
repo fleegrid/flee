@@ -32,11 +32,11 @@ typedef struct {
    * input
    */
   // local ip
-  fl_ip ip;
+  struct in_addr ip;
   // point to point destination ip
-  fl_ip dst_ip;
+  struct in_addr dst_ip;
   // netmask
-  fl_ip netmask;
+  struct in_addr netmask;
   // mtu
   int mtu;
   /*

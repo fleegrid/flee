@@ -16,26 +16,6 @@
 
 #include <event2/event.h>
 
-/**
- * __unsued macro
- */
-#ifndef __unused
-#define __unused __attribute__((unused))
-#endif
-
-/*
- * platform detection
- */
-#if defined(__APPLE__) && defined(__MACH__)
-/* Darwin system, including macOS, iOS */
-#define _FL_DARWIN
-#elif defined(__linux__)
-/* Linux system */
-#define _FL_LINUX
-#else
-#error "platform not supported"
-#endif
-
 /*
  * FL_EXTERN
  */
@@ -44,28 +24,6 @@
 #else
 #define FL_EXTERN extern
 #endif
-
-/*
- * logging
- */
-#define __FILENAME__                                                           \
-  (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
-
-#ifdef DEBUG
-#define DLOG(fmt, ...)                                                         \
-  printf("[DEBUG] %s:%d:%s(): " fmt "\n", __FILENAME__, __LINE__, __func__,    \
-         ##__VA_ARGS__);
-#else
-#define DLOG(fmt, ...)
-#endif
-
-#define LOG(fmt, ...)                                                          \
-  printf("%s:%d:%s(): " fmt "\n", __FILENAME__, __LINE__, __func__,            \
-         ##__VA_ARGS__);
-
-#define ELOG(fmt, ...)                                                         \
-  fprintf(stderr, "%s:%d:%s(): " fmt "\n", __FILENAME__, __LINE__, __func__,   \
-          ##__VA_ARGS__);
 
 /*
  * error
@@ -86,30 +44,6 @@ typedef enum {
   // failed to decrypt
   fl_ecrypto = 4,
 } fl_err;
-
-// if ERR is not fl_ok, goto LABEL
-#define require_ok(ERR, LABEL)                                                 \
-  if (ERR != fl_ok) {                                                          \
-    goto LABEL;                                                                \
-  }
-
-// if COND is not satisfied, then ACT and goto LABEL
-#define require(COND, ACT, LABEL)                                              \
-  if (!(COND)) {                                                               \
-    ACT;                                                                       \
-    goto LABEL;                                                                \
-  }
-
-// if COND is not satisfied, print STR to stderr and abort()
-#define require_fatal(COND, STR)                                               \
-  if (!(COND)) {                                                               \
-    ELOG("fatal error: %s not match, %s", #COND, STR);                         \
-    abort();                                                                   \
-  }
-
-// if RET is < 0, then assign ERR to fl_esyscall and goto LABEL
-#define require_syscall(RET, ERR, LABEL)                                       \
-  require(RET >= 0, ERR = fl_esyscall, LABEL)
 
 /**
  * internal initialization

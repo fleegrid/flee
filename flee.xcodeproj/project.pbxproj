@@ -38,6 +38,7 @@
 		9461A1421F22113300FB6A7F /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
 		9461A1431F22113300FB6A7F /* tun.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tun.h; sourceTree = "<group>"; };
 		9461A1441F22113300FB6A7F /* flee.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = flee.h; sourceTree = "<group>"; };
+		94658CB01F25C8C500DF63CB /* internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = internal.h; sourceTree = "<group>"; };
 		947DA15E1F24876E00BB6E27 /* libevent_core.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libevent_core.a; path = "vendor/darwin-x86_64/lib/libevent_core.a"; sourceTree = "<group>"; };
 		947DA15F1F24876E00BB6E27 /* libevent_extra.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libevent_extra.a; path = "vendor/darwin-x86_64/lib/libevent_extra.a"; sourceTree = "<group>"; };
 		947DA1601F24876E00BB6E27 /* libevent_pthreads.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libevent_pthreads.a; path = "vendor/darwin-x86_64/lib/libevent_pthreads.a"; sourceTree = "<group>"; };
@@ -108,6 +109,7 @@
 		9461A1411F22113300FB6A7F /* flee */ = {
 			isa = PBXGroup;
 			children = (
+				94658CB01F25C8C500DF63CB /* internal.h */,
 				9461A1421F22113300FB6A7F /* common.h */,
 				9461A1431F22113300FB6A7F /* tun.h */,
 				94C78D4D1F2266C200070279 /* crypto.h */,

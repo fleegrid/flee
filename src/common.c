@@ -7,6 +7,7 @@
 
 #define __FL_LIB_SOURCE__
 #include <flee/common.h>
+#include <flee/internal.h>
 
 #include <stdio.h>
 #include <string.h>
