@@ -12,21 +12,6 @@
 
 #include <net/if.h>
 
-/**
- * fl_ip is a 32-bit IPv4 address
- */
-typedef unsigned char fl_ip[4];
-
-/**
- * parse a A.B.C.D IP string
- */
-fl_err fl_ip_set(fl_ip ip, char *s);
-
-/*
- * convert IP to unsigned int 32
- */
-uint32_t fl_ip_to_u(fl_ip ip);
-
 typedef struct {
   /*
    * input
@@ -49,7 +34,7 @@ typedef struct {
 } fl_tun;
 
 #define fl_tun_empty                                                           \
-  (fl_tun) { .fd = -1 }
+  { .fd = -1 }
 
 /**
  * initialize a fl_tun structure, setup IP and dstIP, returns name and fd
@@ -60,6 +45,6 @@ fl_err fl_tun_init(fl_tun *tun);
 /**
  * close the underlaying fd
  */
-fl_err fl_tun_deinit(fl_tun *tun);
+void fl_tun_deinit(fl_tun *tun);
 
 #endif /* _FLEE_TUN_H_ */

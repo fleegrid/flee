@@ -27,105 +27,121 @@
 #include <sys/kern_event.h>
 #endif
 
-fl_err fl_ip_set(fl_ip ip, char *s) {
-  fl_err err = fl_ok;
-  int ret = 0;
-  ret = sscanf(s, "%hhu.%hhu.%hhu.%hhu", &ip[0], &ip[1], &ip[2], &ip[3]);
-  require(ret == 4, err = fl_eip, exit);
-exit:
-  return err;
-}
-
-uint32_t fl_ip_to_u(fl_ip ip) {
-  uint32_t ret = 0;
-  memcpy(&ret, ip, sizeof(ret));
-  return ret;
-}
+#ifdef __FL_LINUX
+#include <fcntl.h>
+#include <linux/if_tun.h>
+#endif
 
 fl_err fl_tun_init(fl_tun *tun) {
   fl_err err = fl_ok;
-  int ret;
+  int fd, fd1, ret;
+  struct ifreq req;
+  struct sockaddr_in *addr;
+  // fix MTU
+  if (tun->mtu <= 0)
+    tun->mtu = 1500;
+  // set all fd to -1
+  fd = fd1 = ret = -1;
 #ifdef __FL_DARWIN
-  printf("WARN: Use NetworkExtension for TUN implementation on macOS/iOS\n");
-
+  LOG("WARN: Use NetworkExtension for TUN implementation on macOS/iOS");
   struct ctl_info info;
   struct sockaddr_ctl ctl;
   unsigned int len;
 
-  // create system control socket
-  tun->fd = socket(PF_SYSTEM, SOCK_DGRAM, SYSPROTO_CONTROL);
-  require_syscall(tun->fd, err, exit);
+  // create system control fd
+  fd = socket(PF_SYSTEM, SOCK_DGRAM, SYSPROTO_CONTROL);
+  require_syscall(fd, err, error);
   // get ctl_id
   strcpy(info.ctl_name, UTUN_CONTROL_NAME);
-  ret = ioctl(tun->fd, CTLIOCGINFO, &info);
-  require_syscall(ret, err, exit);
-  // connect kernel
+  ret = ioctl(fd, CTLIOCGINFO, &info);
+  require_syscall(ret, err, error);
+  // connect utun service, fd becomes available
   ctl = (struct sockaddr_ctl){.sc_len = sizeof(struct sockaddr_ctl),
                               .sc_family = AF_SYSTEM,
                               .ss_sysaddr = AF_SYS_CONTROL,
                               .sc_id = info.ctl_id,
                               .sc_unit = 0,
                               .sc_reserved = {0, 0, 0, 0, 0}};
-  ret = connect(tun->fd, (struct sockaddr *)&ctl, sizeof(struct sockaddr_ctl));
-  require_syscall(tun->fd, err, exit);
-  // get name
+  ret = connect(fd, (struct sockaddr *)&ctl, sizeof(struct sockaddr_ctl));
+  require_syscall(fd, err, error);
+  // get device name
   len = sizeof(tun->name);
-  ret = getsockopt(tun->fd, SYSPROTO_CONTROL, UTUN_OPT_IFNAME, tun->name, &len);
-  require_syscall(ret, err, exit);
-  // set ip address
-  int fd;
-  struct ifreq req;
-  struct sockaddr_in *addr;
-  // connect NET kernel
-  fd = socket(AF_INET, SOCK_DGRAM, 0);
-  require_syscall(ret, err, exit);
-  // prepare iface name
+  ret = getsockopt(fd, SYSPROTO_CONTROL, UTUN_OPT_IFNAME, tun->name, &len);
+  require_syscall(ret, err, error);
+#endif
+#ifdef __FL_LINUX
+  // open tun device
+  fd = open("/dev/net/tun", O_RDWR);
+  require_syscall(fd, err, error);
+  // set tun IFF
+  req.ifr_ifru.ifru_flags = IFF_TUN;
+  strcpy(req.ifr_ifrn.ifrn_name, "");
+  ret = ioctl(fd, TUNSETIFF, &req);
+  require_syscall(ret, err, error);
+  // get device name
+  strncpy(tun->name, req.ifr_ifrn.ifrn_name, sizeof tun->name);
+  // set device persist
+  ret = ioctl(fd, TUNSETPERSIST, 0);
+  require_syscall(ret, err, error);
+#endif
+  // connect net kernel
+  fd1 = socket(AF_INET, SOCK_DGRAM, 0);
+  require_syscall(fd1, err, error);
+  // set iface name
   strncpy(req.ifr_name, tun->name, IF_NAMESIZE);
-  // set if ADDR
+  // set iface ADDR
   addr = (struct sockaddr_in *)&req.ifr_addr;
   addr->sin_family = AF_INET;
   addr->sin_port = 0;
   addr->sin_addr = tun->ip;
-  ret = ioctl(fd, SIOCSIFADDR, &req);
-  require_syscall(ret, err, exit);
-  // set if DSTADDR
+  ret = ioctl(fd1, SIOCSIFADDR, &req);
+  require_syscall(ret, err, error);
+  // set iface DSTADDR
   addr = (struct sockaddr_in *)&req.ifr_dstaddr;
   addr->sin_family = AF_INET;
   addr->sin_port = 0;
   addr->sin_addr = tun->dst_ip;
-  ret = ioctl(fd, SIOCSIFDSTADDR, &req);
-  require_syscall(ret, err, exit);
-  // set netmask
+  ret = ioctl(fd1, SIOCSIFDSTADDR, &req);
+  require_syscall(ret, err, error);
+  // set iface NETMASK
   addr = (struct sockaddr_in *)&req.ifr_addr;
   addr->sin_family = AF_INET;
   addr->sin_port = 0;
   addr->sin_addr = tun->netmask;
-  ret = ioctl(fd, SIOCSIFNETMASK, &req);
-  require_syscall(ret, err, exit);
-  // set MTU
+  ret = ioctl(fd1, SIOCSIFNETMASK, &req);
+  require_syscall(ret, err, error);
+  // set iface MTU
   req.ifr_mtu = tun->mtu;
-  ret = ioctl(fd, SIOCSIFMTU, &req);
-  require_syscall(ret, err, exit);
-  // get flags
-  ret = ioctl(fd, SIOCGIFFLAGS, &req);
-  require_syscall(ret, err, exit);
+  ret = ioctl(fd1, SIOCSIFMTU, &req);
+  require_syscall(ret, err, error);
+  // get iface FLAGS
+  ret = ioctl(fd1, SIOCGIFFLAGS, &req);
+  require_syscall(ret, err, error);
   // set UP flag
-  req.ifr_flags |= IFF_UP;
-  ret = ioctl(fd, SIOCSIFFLAGS, &req);
-  require_syscall(ret, err, exit);
-#endif
+  req.ifr_flags |= (IFF_UP | IFF_RUNNING);
+  ret = ioctl(fd1, SIOCSIFFLAGS, &req);
+  require_syscall(ret, err, error);
+  // set fd
+  tun->fd = fd;
+  goto exit;
+error:
+  // close fd
+  if (fd > 0)
+    close(fd);
+  // reset fd to -1
+  tun->fd = -1;
+  // clear name
+  memset(tun->name, 0, sizeof tun->name);
 exit:
+  // close fd1
+  if (fd1 > 0)
+    close(fd1);
   return err;
 }
 
-fl_err fl_tun_deinit(fl_tun *tun) {
-  fl_err err = fl_ok;
-  int ret;
+void fl_tun_deinit(fl_tun *tun) {
   if (tun->fd > 0) {
-    ret = close(tun->fd);
-    tun->fd = -1;
-    require_syscall(ret, err, exit);
+    close(tun->fd);
   }
-exit:
-  return err;
+  tun->fd = -1;
 }

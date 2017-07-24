@@ -15,12 +15,16 @@
 
 struct event_base *base;
 
+fl_tun tun = fl_tun_empty;
+
 void on_signal(evutil_socket_t fd, short flags, void *args) {
   LOG("exiting: SIGNAL(%d)", fd);
+  fl_tun_deinit(&tun);
   event_base_loopbreak(base);
 }
 
 int main(int argc __unused, char **argv __unused) {
+  fl_err err = fl_ok;
   fl_init();
 
   char *welcome = "flee v1.0";
@@ -48,11 +52,16 @@ int main(int argc __unused, char **argv __unused) {
 
   LOG("Welcome: %s", decrypted);
 
-  fl_tun tun;
   tun.ip.s_addr = inet_addr("10.10.10.2");
   tun.dst_ip.s_addr = inet_addr("10.10.10.1");
   tun.netmask.s_addr = inet_addr("255.255.255.255");
-  fl_tun_init(&tun);
+  tun.mtu = 1500;
+  err = fl_tun_init(&tun);
+
+  LOG("TUN: %s %d", tun.name, err);
+  if (err != fl_ok) {
+    LOG("ERR: %s", strerror(errno));
+  }
 
   base = event_base_new();
 
