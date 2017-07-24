@@ -8,6 +8,10 @@ FleeGrid C implementation
 
 * `libsodium`
 
+* `libevent`
+
+* `libnftnl`
+
 ## Security
 
 All commits and emails should be signed with GPG key [0xE160DAF25E30EB52](https://pgp.key-server.io/0xE160DAF25E30EB52)
@@ -21,8 +25,6 @@ You MUST encrypt your email with the GPG key mentioned above and also provide yo
 ## Credits
 
 * A project that must not be named
-
-* `BLAKE2`, [https://blake2.net](https://blake2.net)
 
 ## License
 
