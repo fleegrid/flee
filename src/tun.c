@@ -122,14 +122,18 @@ fl_err fl_tun_init(fl_tun *tun) {
   ret = ioctl(fd1, SIOCSIFFLAGS, &req);
   validate_syscall(ret, err, error);
   // set fd
-  tun->fd = fd;
+  tun->file = fdopen(fd, "rw");
+  if (tun->file == NULL) {
+    err = fl_esyscall;
+    goto error;
+  }
   goto exit;
 error:
   // close fd
   if (fd > 0)
     close(fd);
-  // reset fd to -1
-  tun->fd = -1;
+  // reset file to NULL
+  tun->file = NULL;
   // clear name
   memset(tun->name, 0, sizeof tun->name);
 exit:
@@ -140,8 +144,8 @@ exit:
 }
 
 void fl_tun_deinit(fl_tun *tun) {
-  if (tun->fd > 0) {
-    close(tun->fd);
+  if (tun->file != NULL) {
+    fclose(tun->file);
   }
-  tun->fd = -1;
+  tun->file = NULL;
 }

@@ -52,41 +52,47 @@
 /*
  * error handling
  */
-// if COND is not satisfied, then ACT and goto LABEL
-#define validate(COND, ACT, LABEL)                                             \
-  if (!(COND)) {                                                               \
-    ACT;                                                                       \
-    goto LABEL;                                                                \
-  }
 
-// if COND is not satisfied, print STR to stderr and abort()
+// if COND is not satisfied, print STR to stderr and exit(EXIT_FAILURE)
 #define insist(COND, STR)                                                      \
   if (!(COND)) {                                                               \
-    ELOG("FATAL: %s", STR);                                                    \
+    ELOG("FATAL: %s, %s", #COND, STR);                                         \
     exit(EXIT_FAILURE);                                                        \
-  }
-
-#define insist_ok(ERR)                                                         \
-  {                                                                            \
-    fl_err _e = ERR;                                                           \
-    insist(_e == fl_ok, fl_strerr(_e))                                         \
   }
 
 // if ERR is not fl_ok, goto LABEL
 #define validate_ok(ERR, LABEL)                                                \
   if (ERR != fl_ok) {                                                          \
+    ELOG("%s", fl_strerr(ERR));                                                \
     goto LABEL;                                                                \
+  }
+
+// if ERR is not fl_ok, print error and exit(EXIT_FAILURE)
+#define insist_ok(ERR)                                                         \
+  {                                                                            \
+    fl_err _e = (ERR);                                                         \
+    if (_e != fl_ok) {                                                         \
+      ELOG("FATAL: %s", fl_strerr(_e));                                        \
+      exit(EXIT_FAILURE);                                                      \
+    }                                                                          \
   }
 
 // if RET < 0, then assign ERR to fl_esyscall and goto LABEL
 #define validate_syscall(RET, ERR, LABEL)                                      \
-  validate(RET >= 0, ERR = fl_esyscall, LABEL)
+  if ((RET) < 0) {                                                             \
+    ERR = fl_esyscall;                                                         \
+    ELOG("%s", strerror(errno));                                               \
+    goto LABEL;                                                                \
+  }
 
 // if RET < 0, then print strerror(errno) then exit(EXIT_FAILURE)
 #define insist_syscall(RET)                                                    \
-  if (RET < 0) {                                                               \
-    ELOG("FATAL: %s", strerror(errno));                                        \
-    exit(EXIT_FAILURE);                                                        \
+  {                                                                            \
+    int _ret = (RET);                                                          \
+    if (_ret < 0) {                                                            \
+      ELOG("FATAL: %s", strerror(_ret));                                       \
+      exit(EXIT_FAILURE);                                                      \
+    }                                                                          \
   }
 
 /*

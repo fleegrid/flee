@@ -8,6 +8,7 @@
 #include <flee.h>
 #include <flee/internal.h>
 
+#include <arpa/inet.h>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <stdio.h>
@@ -17,19 +18,26 @@
 #include <pthread.h>
 #include <semaphore.h>
 
+#define MTU 1480
+
+#define BUFSIZE MTU * 2
+
 static int sock;
+
+static fl_tun tun;
 
 static fl_crypto rxc;
 static fl_sem_t rxs;
 static pthread_t rxt;
-static unsigned char rxbuf[64 * 1024];
+static unsigned char rxbuf[BUFSIZ];
 
 static fl_crypto txc;
 static fl_sem_t txs;
 static pthread_t txt;
-static unsigned char txbuf[64 * 1024];
+static unsigned char txbuf[BUFSIZ];
 
 static void *rx_thread(void *ctx __unused) {
+  DLOG("RX stream opened");
   ssize_t n;
   // RX
   while ((n = read(sock, rxbuf, sizeof rxbuf - 1)) > 0) {
@@ -43,7 +51,13 @@ static void *rx_thread(void *ctx __unused) {
 }
 
 static void *tx_thread(void *ctx __unused) {
-  txbuf[0] = '\0';
+  DLOG("TX stream opened");
+  ssize_t n;
+  // TUN head
+  // TX
+  while ((n = fread(txbuf, 4, 1, tun.file)) > 0) {
+    DLOG("%02x%02x%02x%02x", txbuf[0], txbuf[1], txbuf[2], txbuf[3]);
+  }
   LOG("TX stream closed");
   fl_sem_post(&txs);
   pthread_exit(NULL);
@@ -51,6 +65,7 @@ static void *tx_thread(void *ctx __unused) {
 }
 
 int main(int argc, char **argv) {
+  fl_err err = fl_ok;
   char *server, *port, *passwd;
   // BOOT
   if (argc != 3) {
@@ -65,12 +80,10 @@ int main(int argc, char **argv) {
     exit(EXIT_FAILURE);
   }
   LOG("flee client v%s", fl_version);
-
-  // init rx crypto, tx crypto
+  // CRYPTO
   fl_crypto_init(&rxc, passwd);
   fl_crypto_init(&txc, passwd);
   fl_crypto_new_subkey(&txc);
-
   // DNS
   struct addrinfo hints;
   struct addrinfo *answer = NULL;
@@ -82,20 +95,32 @@ int main(int argc, char **argv) {
   hints.ai_flags = AI_ADDRCONFIG;
   ret = getaddrinfo(server, port, &hints, &answer);
   insist_syscall(ret);
+  // TUN
+  inet_pton(AF_INET, "10.6.9.2", &tun.ip);
+  inet_pton(AF_INET, "10.6.9.1", &tun.dst_ip);
+  inet_pton(AF_INET, "255.255.255.255", &tun.netmask);
+  tun.mtu = MTU;
+  err = fl_tun_init(&tun);
+  validate_ok(err, exit);
+  LOG("TUN device created: %s", tun.name);
   // SOCK
   sock = socket(answer->ai_family, answer->ai_socktype, answer->ai_protocol);
-  insist_syscall(sock);
+  validate_syscall(sock, err, exit);
   // CONNECT
   ret = connect(sock, answer->ai_addr, answer->ai_addrlen);
-  insist_syscall(ret);
-  // RX semaphore
+  validate_syscall(ret, err, exit);
+  // SEM
   fl_sem_init(&rxs, 0);
   fl_sem_init(&txs, 0);
+  // THREADS
   pthread_create(&rxt, NULL, rx_thread, NULL);
   pthread_create(&txt, NULL, tx_thread, NULL);
-  // TX semaphore
+  // SEM WAIT
   fl_sem_wait(&rxs);
   fl_sem_wait(&txs);
+exit:
+  // DEINIT TUN
+  fl_tun_deinit(&tun);
   LOG("flee client exiting");
-  return 0;
+  return err;
 }
