@@ -42,6 +42,9 @@ static void *rx_thread(void *ctx __unused) {
   // RX
   while ((n = read(sock, rxbuf, sizeof rxbuf - 1)) > 0) {
     rxbuf[n] = '\0';
+    if (rxbuf[n - 1] == '\n') {
+      rxbuf[n - 1] = '\0';
+    }
     DLOG("%s", rxbuf);
   }
   LOG("RX stream closed");
@@ -55,8 +58,8 @@ static void *tx_thread(void *ctx __unused) {
   ssize_t n;
   // TUN head
   // TX
-  while ((n = fread(txbuf, 4, 1, tun.file)) > 0) {
-    DLOG("%02x%02x%02x%02x", txbuf[0], txbuf[1], txbuf[2], txbuf[3]);
+  while ((n = read(tun.fd, txbuf, sizeof txbuf)) > 0) {
+    DLOG("TUNPacket read: %ld", n);
   }
   LOG("TX stream closed");
   fl_sem_post(&txs);
@@ -67,7 +70,7 @@ static void *tx_thread(void *ctx __unused) {
 int main(int argc, char **argv) {
   fl_err err = fl_ok;
   char *server, *port, *passwd;
-  // BOOT
+  // ARGUMENTS
   if (argc != 3) {
     printf("Usage: %s SERVER_ADDRESS PORT\n", argv[0]);
     exit(EXIT_FAILURE);
@@ -80,6 +83,8 @@ int main(int argc, char **argv) {
     exit(EXIT_FAILURE);
   }
   LOG("flee client v%s", fl_version);
+  // BOOT
+  insist_ok(fl_init());
   // CRYPTO
   fl_crypto_init(&rxc, passwd);
   fl_crypto_init(&txc, passwd);

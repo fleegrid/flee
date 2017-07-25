@@ -42,8 +42,8 @@ typedef enum {
   fl_esodium = 3,
   // failed to decrypt
   fl_edecrypt = 4,
-  // bad url
-  fl_eurl = 5,
+  // bad system() command
+  fl_ecommand = 5,
 } fl_err;
 
 #define fl_version "1.0"

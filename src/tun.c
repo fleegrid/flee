@@ -14,6 +14,7 @@
 #include <string.h>
 #include <unistd.h>
 
+#include <arpa/inet.h>
 #include <net/if.h>
 #include <netinet/in.h>
 #include <sys/ioctl.h>
@@ -35,8 +36,6 @@
 fl_err fl_tun_init(fl_tun *tun) {
   fl_err err = fl_ok;
   int fd, fd1, ret;
-  struct ifreq req;
-  struct sockaddr_in *addr;
   // fix MTU
   if (tun->mtu <= 0)
     tun->mtu = 1500;
@@ -68,8 +67,26 @@ fl_err fl_tun_init(fl_tun *tun) {
   len = sizeof(tun->name);
   ret = getsockopt(fd, SYSPROTO_CONTROL, UTUN_OPT_IFNAME, tun->name, &len);
   validate_syscall(ret, err, error);
+  // ioctl with SIOCXIFXXX series not work well on macOS
+  char command[128];
+  char ipstr[INET_ADDRSTRLEN];
+  char dstipstr[INET_ADDRSTRLEN];
+  char netmaskipstr[INET_ADDRSTRLEN];
+  inet_ntop(AF_INET, &tun->ip, ipstr, sizeof ipstr);
+  inet_ntop(AF_INET, &tun->dst_ip, dstipstr, sizeof dstipstr);
+  inet_ntop(AF_INET, &tun->netmask, netmaskipstr, sizeof netmaskipstr);
+  sprintf(command, "ifconfig %s %s %s netmask %s mtu %d up", tun->name, ipstr,
+          dstipstr, netmaskipstr, tun->mtu);
+  ret = system(command);
+  if (ret != 0) {
+    ELOG("command failed: %s (%d)", command, ret);
+    err = fl_ecommand;
+    goto error;
+  }
 #endif
 #ifdef __FL_LINUX
+  struct ifreq req;
+  struct sockaddr_in *addr;
   // open tun device
   fd = open("/dev/net/tun", O_RDWR);
   validate_syscall(fd, err, error);
@@ -83,7 +100,6 @@ fl_err fl_tun_init(fl_tun *tun) {
   // set device persist
   ret = ioctl(fd, TUNSETPERSIST, 0);
   validate_syscall(ret, err, error);
-#endif
   // connect net kernel
   fd1 = socket(AF_INET, SOCK_DGRAM, 0);
   validate_syscall(fd1, err, error);
@@ -121,19 +137,16 @@ fl_err fl_tun_init(fl_tun *tun) {
   req.ifr_flags |= (IFF_UP | IFF_RUNNING);
   ret = ioctl(fd1, SIOCSIFFLAGS, &req);
   validate_syscall(ret, err, error);
+#endif
   // set fd
-  tun->file = fdopen(fd, "rw");
-  if (tun->file == NULL) {
-    err = fl_esyscall;
-    goto error;
-  }
+  tun->fd = fd;
   goto exit;
 error:
   // close fd
   if (fd > 0)
     close(fd);
   // reset file to NULL
-  tun->file = NULL;
+  tun->fd = -1;
   // clear name
   memset(tun->name, 0, sizeof tun->name);
 exit:
@@ -144,8 +157,8 @@ exit:
 }
 
 void fl_tun_deinit(fl_tun *tun) {
-  if (tun->file != NULL) {
-    fclose(tun->file);
+  if (tun->fd > 0) {
+    close(tun->fd);
   }
-  tun->file = NULL;
+  tun->fd = -1;
 }

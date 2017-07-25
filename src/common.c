@@ -36,8 +36,8 @@ char *fl_strerr(fl_err err) {
     return strerror(errno);
   case fl_edecrypt:
     return "failed to decrypt";
-  case fl_eurl:
-    return "bad url";
+  case fl_ecommand:
+    return "bad command";
   default:
     return "unknown";
   }

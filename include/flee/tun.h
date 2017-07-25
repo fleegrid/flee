@@ -31,7 +31,7 @@ typedef struct {
   // name of device
   char name[IF_NAMESIZE];
   // underlaying file descriptor
-  FILE *file;
+  int fd;
 } fl_tun;
 
 #define fl_tun_empty                                                           \

@@ -20,13 +20,7 @@
 
 struct event_base *base;
 
-fl_err extract_url(char *url, char **passwd, char **host) {
-  if (strstr(url, SCHEME) != url) {
-    ELOG("url should start with 'flee://': %s", url);
-    return fl_eurl;
-  }
-  return fl_ok;
-}
+fl_err extract_url(char *url, char **passwd, char **host) { return fl_ok; }
 
 void start_client(char *url) {
   LOG("flee v%s client", fl_version);
