@@ -11,6 +11,5 @@
 #include <flee/common.h>
 #include <flee/tun.h>
 #include <flee/crypto.h>
-#include <flee/client.h>
 
 #endif /* _FLEE_H_ */

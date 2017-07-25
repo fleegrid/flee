@@ -16,7 +16,11 @@ void fl_crypto_init(fl_crypto *crypto, char *passwd) {
   int ret = crypto_generichash_blake2b(crypto->key, sizeof crypto->key,
                                        (unsigned char *)passwd, strlen(passwd),
                                        NULL, 0);
-  require_fatal(ret == 0, "failed to load key");
+  insist(ret == 0, "failed to load key");
+  fl_crypto_reset(crypto);
+}
+
+void fl_crypto_reset(fl_crypto *crypto) {
   memset(crypto->salt, 0, sizeof crypto->salt);
   memset(crypto->subkey, 0, sizeof crypto->subkey);
   memset(crypto->nonce, 0, sizeof crypto->nonce);
@@ -28,7 +32,7 @@ static void fl_crypto_derivate_subkey(fl_crypto *crypto) {
   int ret = crypto_generichash_blake2b(crypto->subkey, sizeof crypto->subkey,
                                        crypto->key, sizeof crypto->key,
                                        crypto->salt, sizeof crypto->salt);
-  require_fatal(ret == 0, "failed to derivate subkey");
+  insist(ret == 0, "failed to derivate subkey");
 }
 
 void fl_crypto_new_subkey(fl_crypto *crypto) {
@@ -46,7 +50,7 @@ void fl_crypto_reset_nonce(fl_crypto *crypto) {
 }
 
 void fl_crypto_increase_nonce(fl_crypto *crypto) {
-  for (int i = 0; i < sizeof crypto->nonce; i++) {
+  for (size_t i = 0; i < sizeof crypto->nonce; i++) {
     crypto->nonce[i]++;
     if (crypto->nonce[i] != 0) {
       return;
@@ -60,7 +64,7 @@ void fl_crypto_encrypt(fl_crypto *crypto, unsigned char *datain,
   int ret = crypto_aead_chacha20poly1305_ietf_encrypt(
       dataout, outlen, datain, inlen, NULL, 0, NULL, crypto->nonce,
       crypto->subkey);
-  require_fatal(ret == 0, "failed to encrypt");
+  insist(ret == 0, "failed to encrypt");
 }
 
 bool fl_crypto_decrypt(fl_crypto *crypto, unsigned char *datain,

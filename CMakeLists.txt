@@ -3,7 +3,8 @@ cmake_minimum_required(VERSION 3.2)
 
 # configs
 include_directories(${PROJECT_SOURCE_DIR}/include)
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99 -Wall -Wextra -Wpedantic -O3")
+set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Wall -Wextra -Wpedantic -Wno-gnu-zero-variadic-macro-arguments -DDEBUG")
+set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3")
 
 # libflee
 set(
@@ -12,7 +13,6 @@ set(
   src/tun.c
   src/crypto.c
   src/common.c
-  src/client.c
 )
 
 add_library(flee-static STATIC ${FLEE_LIB_SRCS})
@@ -20,36 +20,29 @@ add_library(flee-shared SHARED ${FLEE_LIB_SRCS})
 
 set_target_properties(flee-static PROPERTIES OUTPUT_NAME "flee")
 set_target_properties(flee-shared PROPERTIES OUTPUT_NAME "flee")
+set_target_properties(flee-static PROPERTIES C_STANDARD 99)
+set_target_properties(flee-shared PROPERTIES C_STANDARD 99)
 
-target_link_libraries(
-  flee-static
+target_link_libraries(flee-static sodium)
+target_link_libraries(flee-shared sodium)
 
-  sodium
-  event_core
-  event_extra
-)
-
-target_link_libraries(
-  flee-shared
-
-  sodium
-  event_core
-  event_extra
-)
-
-# flee
-set(
-  FLEE_CLI_SRCS
-
-  src/main.c
-)
-
-add_executable(flee-cli ${FLEE_CLI_SRCS})
+# flee/fleed
+add_executable(flee-cli src/flee.c)
+add_executable(fled-cli src/fled.c)
 
 set_target_properties(flee-cli PROPERTIES OUTPUT_NAME "flee")
+set_target_properties(flee-cli PROPERTIES C_STANDARD 99)
+set_target_properties(fled-cli PROPERTIES OUTPUT_NAME "fled")
+set_target_properties(fled-cli PROPERTIES C_STANDARD 99)
 
 target_link_libraries(
   flee-cli
+
+  flee-static
+  sodium
+)
+target_link_libraries(
+  fled-cli
 
   flee-static
   sodium
@@ -59,18 +52,12 @@ target_link_libraries(
 
 # platform specified links
 if(UNIX)
-  target_link_libraries(flee-static event_pthreads pthread)
-  target_link_libraries(flee-shared event_pthreads pthread)
-
-  if(CMAKE_SYSTEM_NAME MATCHES "Linux")
-    target_link_libraries(flee-static nftnl)
-    target_link_libraries(flee-shared nftnl)
-  endif()
+  target_link_libraries(flee-cli pthread)
 endif()
 
 if(UNIX)
-  target_link_libraries(flee-cli event_pthreads pthread)
+  target_link_libraries(fled-cli event_pthreads pthread)
   if(CMAKE_SYSTEM_NAME MATCHES "Linux")
-    target_link_libraries(flee-cli nftnl)
+    target_link_libraries(fled-cli nftnl)
   endif()
 endif()

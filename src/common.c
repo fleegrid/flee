@@ -9,40 +9,36 @@
 #include <flee/common.h>
 #include <flee/internal.h>
 
+#include <errno.h>
 #include <stdio.h>
 #include <string.h>
 
-#include <event2/event.h>
 #include <sodium.h>
-
-void fl_libevent_logger(int severity, const char *msg) {
-  const char *s;
-  switch (severity) {
-  case EVENT_LOG_DEBUG:
-    s = "DEBUG";
-    break;
-  case EVENT_LOG_MSG:
-    s = "MESSG";
-    break;
-  case EVENT_LOG_WARN:
-    s = " WARN";
-    break;
-  case EVENT_LOG_ERR:
-    s = "ERROR";
-    break;
-  default:
-    s = "?????";
-    break; /* never reached */
-  }
-  printf("[%s] %s\n", s, msg);
-}
 
 fl_err fl_init() {
   // initialize sodium, pick best implementation
   if (sodium_init() != 0) {
-    return fl_ecrypto;
+    return fl_esodium;
   }
-  // set libevent log callback
-  event_set_log_callback(&fl_libevent_logger);
+
   return fl_ok;
+}
+
+char *fl_strerr(fl_err err) {
+  switch (err) {
+  case fl_ok:
+    return "ok";
+  case fl_eplatform:
+    return "platform not supported";
+  case fl_esodium:
+    return "sodium failed to initialize";
+  case fl_esyscall:
+    return strerror(errno);
+  case fl_edecrypt:
+    return "failed to decrypt";
+  case fl_eurl:
+    return "bad url";
+  default:
+    return "unknown";
+  }
 }

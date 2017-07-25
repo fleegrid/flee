@@ -8,13 +8,12 @@
 #ifndef _FLEE_COMMON_H_
 #define _FLEE_COMMON_H_
 
+#include <errno.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include <event2/event.h>
 
 /*
  * FL_EXTERN
@@ -35,19 +34,28 @@
 typedef enum {
   // no error
   fl_ok = 0,
-  // required function is not implemented in current platform
+  // validated function is not implemented in current platform
   fl_eplatform = 1,
   // syscall err, check errno for details
   fl_esyscall = 2,
-  // ip invalid
-  fl_eip = 3,
+  // sodium failed to initialize
+  fl_esodium = 3,
   // failed to decrypt
-  fl_ecrypto = 4,
+  fl_edecrypt = 4,
+  // bad url
+  fl_eurl = 5,
 } fl_err;
+
+#define fl_version "1.0"
 
 /**
  * internal initialization
  */
 fl_err fl_init();
+
+/**
+ * fl_err to string
+ */
+char *fl_strerr(fl_err err);
 
 #endif /* _FLEE_COMMON_H_ */

@@ -7,8 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		942771511F23C53E007EB726 /* client.c in Sources */ = {isa = PBXBuildFile; fileRef = 942771501F23C53E007EB726 /* client.c */; };
-		94C78D4A1F2264B200070279 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 94C78D471F2264B200070279 /* main.c */; };
+		9423FD981F2729D80012857E /* flee.c in Sources */ = {isa = PBXBuildFile; fileRef = 9423FD971F2729D80012857E /* flee.c */; };
 		94C78D4B1F2264B200070279 /* tun.c in Sources */ = {isa = PBXBuildFile; fileRef = 94C78D481F2264B200070279 /* tun.c */; };
 		94C78D521F226D0300070279 /* crypto.c in Sources */ = {isa = PBXBuildFile; fileRef = 94C78D511F226D0300070279 /* crypto.c */; };
 		94C78DB21F235EFC00070279 /* common.c in Sources */ = {isa = PBXBuildFile; fileRef = 94C78DB11F235EFC00070279 /* common.c */; };
@@ -27,10 +26,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		9423FD971F2729D80012857E /* flee.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = flee.c; sourceTree = "<group>"; };
 		9427714B1F2379C6007EB726 /* libsodium.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsodium.a; path = deps/lib/libsodium.a; sourceTree = "<group>"; };
 		9427714D1F23A33E007EB726 /* libuv.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libuv.a; path = deps/lib/libuv.a; sourceTree = "<group>"; };
-		9427714F1F23C00F007EB726 /* client.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = client.h; sourceTree = "<group>"; };
-		942771501F23C53E007EB726 /* client.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = client.c; sourceTree = "<group>"; };
 		942771521F23EDD5007EB726 /* libevent_core.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libevent_core.a; path = deps/lib/libevent_core.a; sourceTree = "<group>"; };
 		942771531F23EDD5007EB726 /* libevent_extra.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libevent_extra.a; path = deps/lib/libevent_extra.a; sourceTree = "<group>"; };
 		942771541F23EDD5007EB726 /* libevent_pthreads.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libevent_pthreads.a; path = deps/lib/libevent_pthreads.a; sourceTree = "<group>"; };
@@ -44,7 +42,7 @@
 		947DA1601F24876E00BB6E27 /* libevent_pthreads.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libevent_pthreads.a; path = "vendor/darwin-x86_64/lib/libevent_pthreads.a"; sourceTree = "<group>"; };
 		947DA1641F24877900BB6E27 /* libpthread.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libpthread.tbd; path = usr/lib/libpthread.tbd; sourceTree = SDKROOT; };
 		947DA1661F2487B100BB6E27 /* libsodium.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsodium.a; path = "vendor/darwin-x86_64/lib/libsodium.a"; sourceTree = "<group>"; };
-		94C78D471F2264B200070279 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		94C78D471F2264B200070279 /* fled.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fled.c; sourceTree = "<group>"; };
 		94C78D481F2264B200070279 /* tun.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tun.c; sourceTree = "<group>"; };
 		94C78D4D1F2266C200070279 /* crypto.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = crypto.h; sourceTree = "<group>"; };
 		94C78D511F226D0300070279 /* crypto.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = crypto.c; sourceTree = "<group>"; };
@@ -109,11 +107,10 @@
 		9461A1411F22113300FB6A7F /* flee */ = {
 			isa = PBXGroup;
 			children = (
-				94658CB01F25C8C500DF63CB /* internal.h */,
 				9461A1421F22113300FB6A7F /* common.h */,
-				9461A1431F22113300FB6A7F /* tun.h */,
 				94C78D4D1F2266C200070279 /* crypto.h */,
-				9427714F1F23C00F007EB726 /* client.h */,
+				94658CB01F25C8C500DF63CB /* internal.h */,
+				9461A1431F22113300FB6A7F /* tun.h */,
 			);
 			path = flee;
 			sourceTree = "<group>";
@@ -121,11 +118,11 @@
 		94C78D461F2264B200070279 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				94C78D471F2264B200070279 /* main.c */,
-				94C78D481F2264B200070279 /* tun.c */,
-				94C78D511F226D0300070279 /* crypto.c */,
 				94C78DB11F235EFC00070279 /* common.c */,
-				942771501F23C53E007EB726 /* client.c */,
+				94C78D511F226D0300070279 /* crypto.c */,
+				94C78D471F2264B200070279 /* fled.c */,
+				9423FD971F2729D80012857E /* flee.c */,
+				94C78D481F2264B200070279 /* tun.c */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -187,9 +184,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				94C78D4A1F2264B200070279 /* main.c in Sources */,
+				9423FD981F2729D80012857E /* flee.c in Sources */,
 				94C78D4B1F2264B200070279 /* tun.c in Sources */,
-				942771511F23C53E007EB726 /* client.c in Sources */,
 				94C78D521F226D0300070279 /* crypto.c in Sources */,
 				94C78DB21F235EFC00070279 /* common.c in Sources */,
 			);

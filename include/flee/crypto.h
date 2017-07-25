@@ -11,16 +11,16 @@
 #include <flee/common.h>
 
 // Chapo key/subkey bytes length
-#define fl_crypto_key_bytes 32 // crypto_aead_chacha20poly1305_ietf_KEYBYTES
+#define fl_key_bytes 32 // crypto_aead_chacha20poly1305_ietf_KEYBYTES
 
 // BLAKE2b key derivation salt bytes length
-#define fl_crypto_salt_bytes 64 // crypto_generichash_blake2b_KEYBYTES_MAX
+#define fl_salt_bytes 64 // crypto_generichash_blake2b_KEYBYTES_MAX
 
 // Chapo per encryption nonce bytes length
-#define fl_crypto_nonce_bytes 12 // crypto_aead_chacha20poly1305_ietf_NPUBBYTES
+#define fl_nonce_bytes 12 // crypto_aead_chacha20poly1305_ietf_NPUBBYTES
 
 // Chapo max encrypted text bytes length - plain text bytes length
-#define fl_crypto_overhead_bytes 16 // crypto_aead_chacha20poly1305_ietf_ABYTES
+#define fl_overhead_bytes 16 // crypto_aead_chacha20poly1305_ietf_ABYTES
 
 /**
  * fl_crypto
@@ -32,13 +32,13 @@
  */
 typedef struct {
   // master key
-  unsigned char key[fl_crypto_key_bytes];
+  unsigned char key[fl_key_bytes];
   // salt for subkey derivation
-  unsigned char salt[fl_crypto_salt_bytes];
+  unsigned char salt[fl_salt_bytes];
   // subkey derived from master key
-  unsigned char subkey[fl_crypto_key_bytes];
+  unsigned char subkey[fl_key_bytes];
   // nonce
-  unsigned char nonce[fl_crypto_nonce_bytes];
+  unsigned char nonce[fl_nonce_bytes];
 } fl_crypto;
 
 /**
@@ -47,6 +47,11 @@ typedef struct {
  * this will also clear subkey, salt and nonce
  */
 void fl_crypto_init(fl_crypto *crypto, char *passwd);
+
+/**
+ * clear salt, subkey and nonce
+ */
+void fl_crypto_reset(fl_crypto *crypto);
 
 /**
  * create a new salt and derivate a subkey
@@ -69,7 +74,7 @@ void fl_crypto_reset_nonce(fl_crypto *crypto);
 void fl_crypto_increase_nonce(fl_crypto *crypto);
 
 /**
- * encrypt 'dataout' is at least 'in_len' + 'fl_crypto_overhead_bytes' length
+ * encrypt 'dataout' is at least 'in_len' + 'fl_overhead_bytes' length
  */
 void fl_crypto_encrypt(fl_crypto *crypto, unsigned char *datain,
                        unsigned long long inlen, unsigned char *dataout,

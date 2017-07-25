@@ -11,6 +11,7 @@
 #include <flee/common.h>
 
 #include <net/if.h>
+#include <netinet/in.h>
 
 typedef struct {
   /*
