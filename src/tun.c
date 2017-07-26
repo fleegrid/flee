@@ -22,18 +22,18 @@
 #include <sys/syscall.h>
 #include <sys/types.h>
 
-#ifdef __FL_APPLE
-#include <net/if_utun.h>
-#include <sys/kern_control.h>
-#include <sys/kern_event.h>
-#endif
-
 #ifdef __FL_LINUX
 #include <fcntl.h>
 #include <linux/if_tun.h>
 #endif
 
 fl_err fl_tun_init(fl_tun *tun) {
+#ifdef __FL_APPLE
+  ELOG("FATAL: Use NetworkExtension for TUN implementation on macOS/iOS");
+  tun->fd = -1;
+  return fl_eplatform;
+#endif
+#ifdef __FL_LINUX
   fl_err err = fl_ok;
   int fd, fd1, ret;
   // fix MTU
@@ -41,50 +41,6 @@ fl_err fl_tun_init(fl_tun *tun) {
     tun->mtu = 1500;
   // set all fd to -1
   fd = fd1 = ret = -1;
-#ifdef __FL_APPLE
-  LOG("WARN: Use NetworkExtension for TUN implementation on macOS/iOS");
-  struct ctl_info info;
-  struct sockaddr_ctl ctl;
-  unsigned int len;
-
-  // create system control fd
-  fd = socket(PF_SYSTEM, SOCK_DGRAM, SYSPROTO_CONTROL);
-  validate_syscall(fd, err, error);
-  // get ctl_id
-  strcpy(info.ctl_name, UTUN_CONTROL_NAME);
-  ret = ioctl(fd, CTLIOCGINFO, &info);
-  validate_syscall(ret, err, error);
-  // connect utun service, fd becomes available
-  ctl = (struct sockaddr_ctl){.sc_len = sizeof(struct sockaddr_ctl),
-                              .sc_family = AF_SYSTEM,
-                              .ss_sysaddr = AF_SYS_CONTROL,
-                              .sc_id = info.ctl_id,
-                              .sc_unit = 0,
-                              .sc_reserved = {0, 0, 0, 0, 0}};
-  ret = connect(fd, (struct sockaddr *)&ctl, sizeof(struct sockaddr_ctl));
-  validate_syscall(fd, err, error);
-  // get device name
-  len = sizeof(tun->name);
-  ret = getsockopt(fd, SYSPROTO_CONTROL, UTUN_OPT_IFNAME, tun->name, &len);
-  validate_syscall(ret, err, error);
-  // ioctl with SIOCXIFXXX series not work well on macOS
-  char command[128];
-  char ipstr[INET_ADDRSTRLEN];
-  char dstipstr[INET_ADDRSTRLEN];
-  char netmaskipstr[INET_ADDRSTRLEN];
-  inet_ntop(AF_INET, &tun->ip, ipstr, sizeof ipstr);
-  inet_ntop(AF_INET, &tun->dst_ip, dstipstr, sizeof dstipstr);
-  inet_ntop(AF_INET, &tun->netmask, netmaskipstr, sizeof netmaskipstr);
-  sprintf(command, "ifconfig %s %s %s netmask %s mtu %d up", tun->name, ipstr,
-          dstipstr, netmaskipstr, tun->mtu);
-  ret = system(command);
-  if (ret != 0) {
-    ELOG("command failed: %s (%d)", command, ret);
-    err = fl_ecommand;
-    goto error;
-  }
-#endif
-#ifdef __FL_LINUX
   struct ifreq req;
   struct sockaddr_in *addr;
   // open tun device
@@ -137,7 +93,6 @@ fl_err fl_tun_init(fl_tun *tun) {
   req.ifr_flags |= (IFF_UP | IFF_RUNNING);
   ret = ioctl(fd1, SIOCSIFFLAGS, &req);
   validate_syscall(ret, err, error);
-#endif
   // set fd
   tun->fd = fd;
   goto exit;
@@ -154,6 +109,7 @@ exit:
   if (fd1 > 0)
     close(fd1);
   return err;
+#endif
 }
 
 void fl_tun_deinit(fl_tun *tun) {
